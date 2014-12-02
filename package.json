@@ -8,12 +8,24 @@
   "author": "Mihai Chezan",
   "contributors": ["Phil Baranovskiy"],
   "license": "MPL 2.0",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "preferences": [{
-        "name": "delayBetweenChecks",
-        "title": "Seconds to wait between checks",
-        "description": "Controls how fast new emails are dettected and notifications will appear. Lower value means faster reaction.",
-        "type": "integer",
-        "value": 1
-    }]
+      "name": "delayBetweenChecks",
+      "title": "Seconds to wait between checks",
+      "description": "Controls how fast new emails are dettected and notifications will appear. Lower value means faster reaction. Minimum allowed value is 1.",
+      "type": "integer",
+      "value": 1
+    }, {
+      "name": "updateFavIcon",
+      "title": "Update Favicon",
+      "description": "Toggle for updating the favicon.",
+      "type": "bool",
+      "value": true
+    }, {
+      "name": "updateDocumentTitle",
+      "title": "Update Document Title",
+      "description": "Toggle for updating document title.",
+      "type": "bool",
+      "value": true
+  }]
 }

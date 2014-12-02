@@ -1,3 +1,4 @@
+var prefs;
 var timer;
 var unreadMessages = 0;
 var documentTitle = document.title;
@@ -67,6 +68,9 @@ function getBase64Icon(number) {
 }
 
 function setFavicon(count) {
+  if (!prefs.updateFavIcon) {
+    return;
+  }
   var icon = getBase64Icon(count);
   var s = document.querySelectorAll("link[rel*='icon'][type='image/png']");
 
@@ -80,6 +84,9 @@ function setFavicon(count) {
 }
 
 function setDocumentTitle(count) {
+  if (!prefs.updateDocumentTitle) {
+    return;
+  }
   var countPrefix = "";
   if (count > 0) {
     countPrefix = "(" + count + ") ";
@@ -124,14 +131,35 @@ function notify() {
   unreadMessages = count;
 }
 
-self.port.on("startMonitor", function(delayBetweenChecks) {
+function setNewPrefs(newPrefs) {
+  prefs = newPrefs;
+  if (prefs.delayBetweenChecks < 1) {
+    prefs.delayBetweenChecks = 1;
+  }
+}
+
+function startMonitor() {
   if (timer) {
     clearInterval(timer);
   }
-  if (delayBetweenChecks < 1) {
-    delayBetweenChecks = 1;
+  timer = setInterval(notify, prefs.delayBetweenChecks * 1000);
+}
+
+self.port.on("startMonitor", function(newPrefs) {
+  setNewPrefs(newPrefs);
+  startMonitor();
+});
+
+self.port.on("prefChange", function(prefName, newPrefs) {
+  if (prefName === "updateFavIcon" && !newPrefs.updateFavIcon) {
+    setFavicon(0);
+  } else if (prefName === "updateDocumentTitle" && !newPrefs.updateDocumentTitle) {
+    setDocumentTitle(0);
   }
-  timer = setInterval(notify, delayBetweenChecks * 1000);
+  setNewPrefs(newPrefs);
+  if (prefName === "delayBetweenChecks") {
+    startMonitor();
+  }
 });
 
 self.port.on("detach", function() {
@@ -139,4 +167,3 @@ self.port.on("detach", function() {
   setFavicon(0);
   setDocumentTitle(0);
 });
-
