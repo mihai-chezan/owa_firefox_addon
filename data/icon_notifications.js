@@ -1,6 +1,6 @@
 var prefs;
 var timer;
-var unreadMessages = 0;
+var oldUnreadMessages = 0;
 var documentTitle = document.title;
 
 var owaIcon = document.createElement("link");
@@ -102,33 +102,42 @@ function countIt(unreadContainer) {
   return count;
 }
 
-function countUnreadMessages() {
-  var unreadContainer;
+function countUnreadEmails() {
   var count = 0;
-
   var folder_panes = document.querySelectorAll("[aria-label='Folder Pane']");
   if (folder_panes.length > 0) {
     for(var pane = folder_panes.length-1; pane >= 0; pane--){
-      unreadContainer = folder_panes[pane].querySelectorAll("[id*='.ucount']");
-      count = countIt(unreadContainer);
+      count += countIt(folder_panes[pane].querySelectorAll("[id*='.ucount']"));
     }
   } else {
-    unreadContainer = document.querySelectorAll('#spnCV');
-    count = countIt(unreadContainer);
+    count = countIt(document.querySelectorAll('#spnCV'));
   }
   return count;
 }
 
-function notify() {
-  var count = countUnreadMessages();
-  if (count != unreadMessages) {
-    setFavicon(count);
-    setDocumentTitle(count);
-    if (count > unreadMessages) {
-      self.port.emit("notify", count - unreadMessages);
+function countUnAcknowledgedCalendarEvents() {
+  return countIt(document.querySelectorAll('#spnRmT.alertBtnTxt'));
+}
+
+function countUnreadMessages() {
+  return countUnreadEmails() + countUnAcknowledgedCalendarEvents();
+}
+
+function buildNotificationMessage(count) {
+  var mess = (count === 1) ? "message" : "messages";
+  return "You have " + count + " new " + mess;
+}
+
+function checkForNewMessages() {
+  var unreadMessages = countUnreadMessages();
+  if (unreadMessages != oldUnreadMessages) {
+    setFavicon(unreadMessages);
+    setDocumentTitle(unreadMessages);
+    if (unreadMessages > oldUnreadMessages) {
+      self.port.emit("notify", buildNotificationMessage(unreadMessages - oldUnreadMessages));
     }
   }
-  unreadMessages = count;
+  oldUnreadMessages = unreadMessages;
 }
 
 function setNewPrefs(newPrefs) {
@@ -142,7 +151,7 @@ function startMonitor() {
   if (timer) {
     clearInterval(timer);
   }
-  timer = setInterval(notify, prefs.delayBetweenChecks * 1000);
+  timer = setInterval(checkForNewMessages, prefs.delayBetweenChecks * 1000);
 }
 
 self.port.on("startMonitor", function(newPrefs) {
