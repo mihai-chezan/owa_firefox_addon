@@ -8,7 +8,7 @@
   "author": "Mihai Chezan",
   "contributors": ["Phil Baranovskiy"],
   "license": "MPL 2.0",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "preferences": [{
       "name": "delayBetweenChecks",
       "title": "Seconds to wait between checks",

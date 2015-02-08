@@ -1,6 +1,7 @@
 var prefs;
 var timer;
-var oldUnreadMessages = 0;
+var oldUnreadEmails = 0;
+var oldUnacknowledgedCalendarEvents = 0;
 var documentTitle = document.title;
 
 var owaIcon = document.createElement("link");
@@ -83,13 +84,13 @@ function setFavicon(count) {
   }
 }
 
-function setDocumentTitle(count) {
+function setDocumentTitle(countEmails, countCalendarEvents) {
   if (!prefs.updateDocumentTitle) {
     return;
   }
   var countPrefix = "";
-  if (count > 0) {
-    countPrefix = "(" + count + ") ";
+  if (countEmails > 0 || countCalendarEvents > 0) {
+    countPrefix = "(" + countEmails + "/" + countCalendarEvents + ") ";
   }
   document.title = countPrefix + documentTitle;
 }
@@ -115,29 +116,38 @@ function countUnreadEmails() {
   return count;
 }
 
-function countUnAcknowledgedCalendarEvents() {
+function countUnacknowledgedCalendarEvents() {
   return countIt(document.querySelectorAll('#spnRmT.alertBtnTxt'));
 }
 
-function countUnreadMessages() {
-  return countUnreadEmails() + countUnAcknowledgedCalendarEvents();
+function buildNotificationMessage(type, count) {
+  return "You have " + count + " new " + type + ((count === 1) ? "" : "s");
 }
 
-function buildNotificationMessage(count) {
-  var mess = (count === 1) ? "message" : "messages";
-  return "You have " + count + " new " + mess;
+function buildEmailNotificationMessage(count) {
+  return buildNotificationMessage("email", count);
+}
+
+function buildCalendarNotificationMessage(count) {
+  return buildNotificationMessage("reminder", count);
 }
 
 function checkForNewMessages() {
-  var unreadMessages = countUnreadMessages();
-  if (unreadMessages != oldUnreadMessages) {
-    setFavicon(unreadMessages);
-    setDocumentTitle(unreadMessages);
-    if (unreadMessages > oldUnreadMessages) {
-      self.port.emit("notify", buildNotificationMessage(unreadMessages - oldUnreadMessages));
+  var unreadEmails = countUnreadEmails();
+  var unacknowledgedCalendarEvents = countUnacknowledgedCalendarEvents();
+  var total = unreadEmails + unacknowledgedCalendarEvents;
+  if (unreadEmails != oldUnreadEmails || unacknowledgedCalendarEvents != oldUnacknowledgedCalendarEvents) {
+    setFavicon(total);
+    setDocumentTitle(unreadEmails, unacknowledgedCalendarEvents);
+    if (unreadEmails > oldUnreadEmails) {
+      self.port.emit("notify", "email", buildEmailNotificationMessage(unreadEmails - oldUnreadEmails));
+    }
+    if (unacknowledgedCalendarEvents > oldUnacknowledgedCalendarEvents) {
+      self.port.emit("notify", "calendar", buildCalendarNotificationMessage(unacknowledgedCalendarEvents - oldUnacknowledgedCalendarEvents));
     }
   }
-  oldUnreadMessages = unreadMessages;
+  oldUnreadEmails = unreadEmails;
+  oldUnacknowledgedCalendarEvents = unacknowledgedCalendarEvents;
 }
 
 function setNewPrefs(newPrefs) {
