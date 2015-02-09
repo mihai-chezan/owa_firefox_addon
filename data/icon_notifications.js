@@ -156,12 +156,15 @@ function getContainersBySpanId(){
 function getNewReminderCount(){
     //OWA check
     var reminderCount;
-    var container = document.querySelectorAll('[aria-label="New Notification"]');
-    if (container.length > 2){
-        reminderCount = parseInt(container[3].title.match(/\d/gi).join(""));
+    var containers = document.querySelectorAll('[aria-label="New Notification"]');
+    if (containers.length > 2){
+        reminderCount = parseInt(containers[3].title.match(/\d/gi).join(""));
     } else {
         //365 check
-        reminderCount = parseInt(document.getElementsByClassName('o365cs-notifications-notificationCounter')[0].innerHTML.match(/\d/gi).join(""));
+        containers = document.getElementsByClassName('o365cs-notifications-notificationCounter');
+        if (containers[0]){
+            reminderCount = parseInt(containers[0].innerHTML.match(/\d/gi).join(""));
+        }
     }
     return (reminderCount - currentReminderCount);
 }
