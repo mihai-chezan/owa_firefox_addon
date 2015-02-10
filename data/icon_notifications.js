@@ -1,7 +1,7 @@
 var prefs;
 var timer;
-var oldUnreadEmails = 0;
-var oldUnacknowledgedCalendarEvents = 0;
+var unreadEmailsCount = 0;
+var visibleRemindersCount = 0;
 var documentTitle = document.title;
 
 var owaIcon = document.createElement("link");
@@ -84,13 +84,13 @@ function setFavicon(count) {
   }
 }
 
-function setDocumentTitle(countEmails, countCalendarEvents) {
+function setDocumentTitle(emails, reminders) {
   if (!prefs.updateDocumentTitle) {
     return;
   }
   var countPrefix = "";
-  if (countEmails > 0 || countCalendarEvents > 0) {
-    countPrefix = "(" + countEmails + "/" + countCalendarEvents + ") ";
+  if (emails > 0 || reminders > 0) {
+    countPrefix = "(" + emails + "/" + reminders + ") ";
   }
   document.title = countPrefix + documentTitle;
 }
@@ -116,7 +116,7 @@ function countUnreadEmails() {
   return count;
 }
 
-function countUnacknowledgedCalendarEvents() {
+function countVisibleReminders() {
   return countIt(document.querySelectorAll('#spnRmT.alertBtnTxt'));
 }
 
@@ -133,21 +133,21 @@ function buildCalendarNotificationMessage(count) {
 }
 
 function checkForNewMessages() {
-  var unreadEmails = countUnreadEmails();
-  var unacknowledgedCalendarEvents = countUnacknowledgedCalendarEvents();
-  var total = unreadEmails + unacknowledgedCalendarEvents;
-  if (unreadEmails != oldUnreadEmails || unacknowledgedCalendarEvents != oldUnacknowledgedCalendarEvents) {
-    setFavicon(total);
-    setDocumentTitle(unreadEmails, unacknowledgedCalendarEvents);
-    if (unreadEmails > oldUnreadEmails) {
-      self.port.emit("notify", "email", buildEmailNotificationMessage(unreadEmails - oldUnreadEmails));
+  var newUnreadEmailsCount = countUnreadEmails();
+  var newVisibleRemindersCount = countVisibleReminders();
+  var changeDetected = (newUnreadEmailsCount != unreadEmailsCount) || (newVisibleRemindersCount != visibleRemindersCount);
+  if (changeDetected) {
+    setFavicon(newUnreadEmailsCount + newVisibleRemindersCount);
+    setDocumentTitle(newUnreadEmailsCount, newVisibleRemindersCount);
+    if (newUnreadEmailsCount > unreadEmailsCount) {
+      self.port.emit("notify", "email", buildEmailNotificationMessage(newUnreadEmailsCount - unreadEmailsCount));
     }
-    if (unacknowledgedCalendarEvents > oldUnacknowledgedCalendarEvents) {
-      self.port.emit("notify", "calendar", buildCalendarNotificationMessage(unacknowledgedCalendarEvents - oldUnacknowledgedCalendarEvents));
+    if (newVisibleRemindersCount > visibleRemindersCount) {
+      self.port.emit("notify", "calendar", buildCalendarNotificationMessage(newVisibleRemindersCount - visibleRemindersCount));
     }
   }
-  oldUnreadEmails = unreadEmails;
-  oldUnacknowledgedCalendarEvents = unacknowledgedCalendarEvents;
+  unreadEmailsCount = newUnreadEmailsCount;
+  visibleRemindersCount = newVisibleRemindersCount;
 }
 
 function setNewPrefs(newPrefs) {
