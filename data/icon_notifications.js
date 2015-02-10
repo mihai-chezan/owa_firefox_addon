@@ -111,7 +111,7 @@ function countUnreadEmails() {
       count += countIt(folder_panes[pane].querySelectorAll("[id*='.ucount']"));
     }
   } else {
-    count = countIt(document.querySelectorAll('#spnCV'));
+    count = countIt(document.querySelectorAll('#spnUC #spnCV'));
   }
   return count;
 }
