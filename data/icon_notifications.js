@@ -14,175 +14,161 @@ document.head.appendChild(owaIcon);
 var img = document.createElement("img");
 img.src = owaIcon.href;
 
-function generateIcon(number, clear) {
-  number = new String(number);
-
-  var canvas = document.createElement("canvas");
-  canvas.width = img.width;
-  canvas.height = img.height;
-  var ctx = canvas.getContext("2d");
-
-  ctx.drawImage(img, 0,0);
-
-  if (!clear) {
-    (function(context, x, y, w, h, radius) {
-      var r = x + w;
-      var b = y + h;
-      context.beginPath();
-      context.fillStyle = "red";
-      context.lineWidth="1";
-      context.moveTo(x+radius, y);
-      context.lineTo(r-radius, y);
-      context.quadraticCurveTo(r, y, r, y+radius);
-      context.lineTo(r, y+h-radius);
-      context.quadraticCurveTo(r, b, r-radius, b);
-      context.lineTo(x+radius, b);
-      context.quadraticCurveTo(x, b, x, b-radius);
-      context.lineTo(x, y+radius);
-      context.quadraticCurveTo(x, y, x+radius, y);
-      context.fill();
-    })(ctx, 2, -2, 16, 14, 0);
-
-    ctx.font = "bold 10px Arial";
-    ctx.textBaseline = "top";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "white";
-    ctx.fillText(number, 9,2);
-  }
-
-  return canvas.toDataURL("image/png");
+function drawIcon(context, x, y, w, h, radius) {
+   var r = x + w;
+   var b = y + h;
+   context.beginPath();
+   context.fillStyle = "red";
+   context.lineWidth = "1";
+   context.moveTo(x + radius, y);
+   context.lineTo(r - radius, y);
+   context.quadraticCurveTo(r, y, r, y + radius);
+   context.lineTo(r, y + h - radius);
+   context.quadraticCurveTo(r, b, r - radius, b);
+   context.lineTo(x + radius, b);
+   context.quadraticCurveTo(x, b, x, b - radius);
+   context.lineTo(x, y + radius);
+   context.quadraticCurveTo(x, y, x + radius, y);
+   context.fill();
 }
 
-function getBase64Icon(number) {
-  if (!number) {
-    number = 0;
-  } else if (number > 99) {
-    number = "99";
-  }
-  var icon;
-  if (number != 0) {
-    icon = generateIcon(number);
-  } else {
-    icon = generateIcon(number, true);
-  }
-  return icon;
+function generateTabIcon(number) {
+   var canvas = document.createElement("canvas");
+   canvas.width = img.width;
+   canvas.height = img.height;
+   var ctx = canvas.getContext("2d");
+
+   ctx.drawImage(img, 0, 0);
+
+   if (number) {
+      drawIcon(ctx, 2, -2, 16, 14, 0);
+      ctx.font = "bold 10px Arial";
+      ctx.textBaseline = "top";
+      ctx.textAlign = "center";
+      ctx.fillStyle = "white";
+      ctx.fillText(number, 9, 2);
+   }
+
+   return canvas.toDataURL("image/png");
 }
 
 function setFavicon(count) {
-  if (!prefs.updateFavIcon) {
-    return;
-  }
-  var icon = getBase64Icon(count);
-  var s = document.querySelectorAll("link[rel*='icon'][type='image/png']");
+   if (!prefs.updateFavIcon) {
+      return;
+   }
+   var icon = generateTabIcon(Math.min(count, 99));
+   var s = document.querySelectorAll("link[rel*='icon'][type='image/png']");
 
-  if (s.length != 1 || s[0].href != icon) {
-    for(var i = s.length-1; i >= 0; i--){
-      s[i].remove();
-    }
-    owaIcon.href = icon;
-    document.head.appendChild(owaIcon);
-  }
+   if (s.length != 1 || s[0].href != icon) {
+      for (var i = s.length - 1; i >= 0; i--) {
+         s[i].remove();
+      }
+      owaIcon.href = icon;
+      document.head.appendChild(owaIcon);
+   }
 }
 
 function setDocumentTitle(emails, reminders) {
-  if (!prefs.updateDocumentTitle) {
-    return;
-  }
-  var countPrefix = "";
-  if (emails > 0 || reminders > 0) {
-    countPrefix = "(" + emails + "/" + reminders + ") ";
-  }
-  document.title = countPrefix + documentTitle;
+   if (!prefs.updateDocumentTitle) {
+      return;
+   }
+   var countPrefix = "";
+   if (emails > 0 || reminders > 0) {
+      countPrefix = "(" + emails + "/" + reminders + ") ";
+   }
+   document.title = countPrefix + documentTitle;
 }
 
 function countIt(unreadContainer) {
-  var count = 0;
-  for(var u_node = unreadContainer.length-1; u_node>=0; u_node--) {
-    count += parseInt(unreadContainer[u_node].innerHTML.match(/\d/gi).join(""), 10);
-  }
-  return count;
+   var count = 0;
+   for (var u_node = unreadContainer.length - 1; u_node >= 0; u_node--) {
+      count += parseInt(unreadContainer[u_node].innerHTML.match(/\d/gi).join(""), 10);
+   }
+   return count;
 }
 
 function countUnreadEmails() {
-  var count = 0;
-  var folder_panes = document.querySelectorAll("[aria-label='Folder Pane']");
-  if (folder_panes.length > 0) {
-    for(var pane = folder_panes.length-1; pane >= 0; pane--){
-      count += countIt(folder_panes[pane].querySelectorAll("[id*='.ucount']"));
-    }
-  } else {
-    count = countIt(document.querySelectorAll('#spnUC #spnCV'));
-  }
-  return count;
+   var count = 0;
+   var folder_panes = document.querySelectorAll("[aria-label='Folder Pane']");
+   if (folder_panes.length > 0) {
+      for (var pane = folder_panes.length - 1; pane >= 0; pane--) {
+         count += countIt(folder_panes[pane].querySelectorAll("[id*='.ucount']"));
+      }
+   } else {
+      count = countIt(document.querySelectorAll('#spnUC #spnCV'));
+   }
+   return count;
 }
 
 function countVisibleReminders() {
-  return countIt(document.querySelectorAll('#spnRmT.alertBtnTxt'));
+   return countIt(document.querySelectorAll('#spnRmT.alertBtnTxt'));
 }
 
 function buildNotificationMessage(type, count) {
-  return "You have " + count + " new " + type + ((count === 1) ? "" : "s");
+   return "You have " + count + " new " + type + ((count === 1) ? "" : "s");
 }
 
 function buildEmailNotificationMessage(count) {
-  return buildNotificationMessage("email", count);
+   return buildNotificationMessage("email", count);
 }
 
 function buildCalendarNotificationMessage(count) {
-  return buildNotificationMessage("reminder", count);
+   return buildNotificationMessage("reminder", count);
 }
 
 function checkForNewMessages() {
-  var newUnreadEmailsCount = countUnreadEmails();
-  var newVisibleRemindersCount = countVisibleReminders();
-  var changeDetected = (newUnreadEmailsCount != unreadEmailsCount) || (newVisibleRemindersCount != visibleRemindersCount);
-  if (changeDetected) {
-    setFavicon(newUnreadEmailsCount + newVisibleRemindersCount);
-    setDocumentTitle(newUnreadEmailsCount, newVisibleRemindersCount);
-    if (newUnreadEmailsCount > unreadEmailsCount) {
-      self.port.emit("notify", "email", buildEmailNotificationMessage(newUnreadEmailsCount - unreadEmailsCount));
-    }
-    if (newVisibleRemindersCount > visibleRemindersCount) {
-      self.port.emit("notify", "calendar", buildCalendarNotificationMessage(newVisibleRemindersCount - visibleRemindersCount));
-    }
-  }
-  unreadEmailsCount = newUnreadEmailsCount;
-  visibleRemindersCount = newVisibleRemindersCount;
+   var newUnreadEmailsCount = countUnreadEmails();
+   var newVisibleRemindersCount = countVisibleReminders();
+   var changeDetected = (newUnreadEmailsCount != unreadEmailsCount)
+         || (newVisibleRemindersCount != visibleRemindersCount);
+   if (changeDetected) {
+      setFavicon(newUnreadEmailsCount + newVisibleRemindersCount);
+      setDocumentTitle(newUnreadEmailsCount, newVisibleRemindersCount);
+      if (newUnreadEmailsCount > unreadEmailsCount) {
+         self.port.emit("notify", "email", buildEmailNotificationMessage(newUnreadEmailsCount - unreadEmailsCount));
+      }
+      if (newVisibleRemindersCount > visibleRemindersCount) {
+         self.port.emit("notify", "calendar", buildCalendarNotificationMessage(newVisibleRemindersCount
+               - visibleRemindersCount));
+      }
+   }
+   unreadEmailsCount = newUnreadEmailsCount;
+   visibleRemindersCount = newVisibleRemindersCount;
 }
 
 function setNewPrefs(newPrefs) {
-  prefs = newPrefs;
-  if (prefs.delayBetweenChecks < 1) {
-    prefs.delayBetweenChecks = 1;
-  }
+   prefs = newPrefs;
+   if (prefs.delayBetweenChecks < 1) {
+      prefs.delayBetweenChecks = 1;
+   }
 }
 
 function startMonitor() {
-  if (timer) {
-    clearInterval(timer);
-  }
-  timer = setInterval(checkForNewMessages, prefs.delayBetweenChecks * 1000);
+   if (timer) {
+      clearInterval(timer);
+   }
+   timer = setInterval(checkForNewMessages, prefs.delayBetweenChecks * 1000);
 }
 
 self.port.on("startMonitor", function(newPrefs) {
-  setNewPrefs(newPrefs);
-  startMonitor();
+   setNewPrefs(newPrefs);
+   startMonitor();
 });
 
 self.port.on("prefChange", function(prefName, newPrefs) {
-  if (prefName === "updateFavIcon" && !newPrefs.updateFavIcon) {
-    setFavicon(0);
-  } else if (prefName === "updateDocumentTitle" && !newPrefs.updateDocumentTitle) {
-    setDocumentTitle(0);
-  }
-  setNewPrefs(newPrefs);
-  if (prefName === "delayBetweenChecks") {
-    startMonitor();
-  }
+   if (prefName === "updateFavIcon" && !newPrefs.updateFavIcon) {
+      setFavicon(0);
+   } else if (prefName === "updateDocumentTitle" && !newPrefs.updateDocumentTitle) {
+      setDocumentTitle(0);
+   }
+   setNewPrefs(newPrefs);
+   if (prefName === "delayBetweenChecks") {
+      startMonitor();
+   }
 });
 
 self.port.on("detach", function() {
-  clearInterval(timer);
-  setFavicon(0);
-  setDocumentTitle(0);
+   clearInterval(timer);
+   setFavicon(0);
+   setDocumentTitle(0);
 });
