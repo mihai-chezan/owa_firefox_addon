@@ -59,7 +59,7 @@ function setFavicon(count) {
    var icon = generateTabIcon(Math.min(count, 99));
    var s = document.querySelectorAll("link[rel*='icon'][type='image/png']");
 
-   if (s.length != 1 || s[0].href != icon) {
+   if (s.length !== 1 || s[0].href !== icon) {
       for (var i = s.length - 1; i >= 0; i--) {
          s[i].remove();
       }
@@ -79,29 +79,66 @@ function setDocumentTitle(emails, reminders) {
    document.title = countPrefix + documentTitle;
 }
 
-function countIt(unreadContainer) {
+function extractNumber(text) {
+   if (text) {
+      var digits = text.match(/\d/gi);
+      if (digits) {
+         return parseInt(digits.join(""), 10);
+      }
+   }
+   return 0;
+}
+
+function getCountFromNodes(nodes) {
    var count = 0;
-   for (var u_node = unreadContainer.length - 1; u_node >= 0; u_node--) {
-      count += parseInt(unreadContainer[u_node].innerHTML.match(/\d/gi).join(""), 10);
+   if (nodes) {
+      for (var i = nodes.length - 1; i >= 0; i--) {
+         count += extractNumber(nodes[i].innerHTML);
+      }
+   }
+   return count;
+}
+
+function getItemsWithActiveCount(folder) {
+   return folder.querySelectorAll("[id*='.ucount']");
+}
+
+function getCountFromFolders(folders) {
+   var count = 0;
+   for (var i = folders.length - 1; i >= 0; i--) {
+      count += getCountFromNodes(getItemsWithActiveCount(folders[i]));
    }
    return count;
 }
 
 function countUnreadEmails() {
-   var count = 0;
-   var folder_panes = document.querySelectorAll("[aria-label='Folder Pane']");
-   if (folder_panes.length > 0) {
-      for (var pane = folder_panes.length - 1; pane >= 0; pane--) {
-         count += countIt(folder_panes[pane].querySelectorAll("[id*='.ucount']"));
-      }
-   } else {
-      count = countIt(document.querySelectorAll('#spnUC #spnCV'));
+   var nodes;
+   if ((nodes = document.querySelectorAll("#spnUC #spnCV")).length > 0) {
+      // OWA 2010
+      return getCountFromNodes(nodes);
    }
-   return count;
+   if ((nodes = document.querySelectorAll("[aria-label='Folder Pane']")).length > 0) {
+      // OWA 2013
+      return getCountFromFolders(nodes);
+   }
+   return 0;
 }
 
 function countVisibleReminders() {
-   return countIt(document.querySelectorAll('#spnRmT.alertBtnTxt'));
+   var nodes;
+   if ((nodes = document.querySelectorAll("#spnRmT.alertBtnTxt")).length > 0) {
+      // OWA 2010
+      return extractNumber(nodes[0].innerHTML);
+   }
+   if ((nodes = document.querySelectorAll("[aria-label='New Notification']")).length > 2) {
+      // OWA 2013
+      return extractNumber(nodes[3].title);
+   }
+   if ((nodes = document.querySelectorAll(".o365cs-notifications-notificationCounter")).length > 0) {
+      // 365 check
+      return extractNumber(nodes[0].innerHTML);
+   }
+   return 0;
 }
 
 function buildNotificationMessage(type, count) {
@@ -112,26 +149,27 @@ function buildEmailNotificationMessage(count) {
    return buildNotificationMessage("email", count);
 }
 
-function buildCalendarNotificationMessage(count) {
+function buildReminderNotificationMessage(count) {
    return buildNotificationMessage("reminder", count);
 }
 
 function checkForNewMessages() {
    var newUnreadEmailsCount = countUnreadEmails();
    var newVisibleRemindersCount = countVisibleReminders();
-   var changeDetected = (newUnreadEmailsCount != unreadEmailsCount)
-         || (newVisibleRemindersCount != visibleRemindersCount);
-   if (changeDetected) {
-      setFavicon(newUnreadEmailsCount + newVisibleRemindersCount);
-      setDocumentTitle(newUnreadEmailsCount, newVisibleRemindersCount);
-      if (newUnreadEmailsCount > unreadEmailsCount) {
-         self.port.emit("notify", "email", buildEmailNotificationMessage(newUnreadEmailsCount - unreadEmailsCount));
-      }
-      if (newVisibleRemindersCount > visibleRemindersCount) {
-         self.port.emit("notify", "calendar", buildCalendarNotificationMessage(newVisibleRemindersCount
-               - visibleRemindersCount));
-      }
+   var noChange = (newUnreadEmailsCount === unreadEmailsCount) && (newVisibleRemindersCount === visibleRemindersCount);
+   if (noChange) {
+      return;
    }
+   setFavicon(newUnreadEmailsCount + newVisibleRemindersCount);
+   setDocumentTitle(newUnreadEmailsCount, newVisibleRemindersCount);
+   if (newUnreadEmailsCount > unreadEmailsCount) {
+      self.port.emit("notify", "email", buildEmailNotificationMessage(newUnreadEmailsCount - unreadEmailsCount));
+   }
+   if (newVisibleRemindersCount > visibleRemindersCount) {
+      self.port.emit("notify", "reminder", buildReminderNotificationMessage(newVisibleRemindersCount
+            - visibleRemindersCount));
+   }
+
    unreadEmailsCount = newUnreadEmailsCount;
    visibleRemindersCount = newVisibleRemindersCount;
 }
@@ -150,12 +188,12 @@ function startMonitor() {
    timer = setInterval(checkForNewMessages, prefs.delayBetweenChecks * 1000);
 }
 
-self.port.on("startMonitor", function(newPrefs) {
+self.port.on("startMonitor", function (newPrefs) {
    setNewPrefs(newPrefs);
    startMonitor();
 });
 
-self.port.on("prefChange", function(prefName, newPrefs) {
+self.port.on("prefChange", function (prefName, newPrefs) {
    if (prefName === "updateFavIcon" && !newPrefs.updateFavIcon) {
       setFavicon(0);
    } else if (prefName === "updateDocumentTitle" && !newPrefs.updateDocumentTitle) {
@@ -167,7 +205,7 @@ self.port.on("prefChange", function(prefName, newPrefs) {
    }
 });
 
-self.port.on("detach", function() {
+self.port.on("detach", function () {
    clearInterval(timer);
    setFavicon(0);
    setDocumentTitle(0);
