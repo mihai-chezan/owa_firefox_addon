@@ -113,6 +113,10 @@ function getCountFromFolders(folders) {
 
 function countUnreadEmails() {
    var nodes;
+   if (prefs.cssForUnreadEmailsDetection) {
+      // custom css
+      return getCountFromNodes(document.querySelectorAll(prefs.cssForUnreadEmailsDetection));
+   }
    if ((nodes = document.querySelectorAll("#spnUC #spnCV")).length > 0) {
       // OWA 2010
       return getCountFromNodes(nodes);
@@ -126,6 +130,10 @@ function countUnreadEmails() {
 
 function countVisibleReminders() {
    var nodes;
+   if (prefs.cssForVisibleRemindersDetection) {
+      // custom css
+      return getCountFromNodes(document.querySelectorAll(prefs.cssForVisibleRemindersDetection));
+   }
    if ((nodes = document.querySelectorAll("#spnRmT.alertBtnTxt")).length > 0) {
       // OWA 2010
       return extractNumber(nodes[0].innerHTML);
