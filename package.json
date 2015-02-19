@@ -2,7 +2,7 @@
   "id": "owa_notifications@mihai-chezan.github.com",
   "name": "owa_notifications",
   "title": "Outlook Web App Notifications",
-  "description": "Add system notifications capability to OWA (Outlook Web App). No configuration needed. When new email arrives into OWA a system notification about this event will be shown. Also the fav icon and document title of the OWA tab are updated to show the number of unread emails. Fork of OWA_firefox_addon by Phil Baranovskiy.",
+  "description": "Add system notifications capability to OWA (Outlook Web App). No configuration needed. System notifications about new emails or reminders are shown, the fav icon and OWA tab title are also updated with the unread email/reminder count.",
   "icon": "data/icon.png",
   "homepage": "https://github.com/mihai-chezan/owa_notifications_firefox_extension",
   "author": "Mihai Chezan",
@@ -12,7 +12,7 @@
   "preferences": [{
       "name": "delayBetweenChecks",
       "title": "Seconds to wait between checks",
-      "description": "Controls how fast new emails are dettected and notifications will appear. Lower value means faster reaction. Minimum allowed value is 1.",
+      "description": "Controls how fast new emails/reminders are detected and notifications will appear. Lower value means faster reaction. Minimum allowed value is 1.",
       "type": "integer",
       "value": 1
     }, {
@@ -30,7 +30,7 @@
     }, {
        "name": "cssForUnreadEmailsDetection",
        "title": "Custom css selector for unread emails detection",
-       "description": "In case number of unread emails is not showing at all or you only want certain fodlers to be included you can use this to customize what is counted as unread email. You need to have html/css knowledge in order to use it. If any value is entered here it will be used as an override to the existing code/behaviour. As an example for OWA 2010 this css selector \"[fldrnm='Inbox'] + #spnUC #spnCV\" will only count unread emails from Inbox folder.",
+       "description": "In case number of unread emails is not showing at all or you only want certain folders to be included you can use this to customize what is counted as unread email. You need to have html/css knowledge in order to use it. If any value is entered here it will be used as an override to the existing code/behaviour. As an example for OWA 2010 this css selector \"[fldrnm='Inbox'] + #spnUC #spnCV\" will only count unread emails from Inbox folder.",
        "type": "string",
        "value": ""
     }, {
