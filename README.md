@@ -15,8 +15,6 @@ For OWA 2010 the css selector to monitor only Folder1 and Folder2 is:
 To get the same result for OWA 2013 the css selector is:  
 `[aria-label='Folder Pane'] [title='Folder1'] ~ [id*='.ucount'], [aria-label='Folder Pane'] [title='Folder2'] ~ [id*='.ucount']`
 
-Fork of [OWA_firefox_addon by Phil Baranovskiy](https://github.com/rockfield/owa_firefox_addon).
-
 The latest approved version of this extension can be installed from [Mozilla's add-ons website](https://addons.mozilla.org/en-US/firefox/addon/outlook-web-app-notifications/) or check the [github releases](https://github.com/mihai-chezan/owa_notifications_firefox_extension/releases) for latest builds.
 
 
@@ -30,3 +28,6 @@ The latest approved version of this extension can be installed from [Mozilla's a
 
 ![Notification and browser taskbar when other window is active and in focus](https://raw.githubusercontent.com/mihai-chezan/owa_notifications_firefox_extension/master/doc/taskbar.png "Notification and browser taskbar when other window is active and in focus")
 
+
+
+Note: this started as a fork of [OWA_firefox_addon by Phil Baranovskiy](https://github.com/rockfield/owa_firefox_addon).

@@ -8,13 +8,19 @@
   "author": "Mihai Chezan",
   "contributors": ["Phil Baranovskiy"],
   "license": "MPL 2.0",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "preferences": [{
       "name": "delayBetweenChecks",
       "title": "Seconds to wait between checks",
       "description": "Controls how fast new emails/reminders are detected and notifications will appear. Lower value means faster reaction. Minimum allowed value is 1.",
       "type": "integer",
       "value": 1
+    }, {
+      "name": "delayBetweenReminders",
+      "title": "Reminder snooze time",
+      "description": "When reminders are not dismissed/snoozed a reminder notification will keep showing up every 'Reminder snooze time' seconds. Set this to zero to disable it.",
+      "type": "integer",
+      "value": 300
     }, {
       "name": "updateFavIcon",
       "title": "Update Favicon",

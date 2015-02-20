@@ -1,5 +1,5 @@
 var prefs;
-var timer;
+var newEventsTimer, remindersTimer;
 var unreadEmailsCount = 0;
 var visibleRemindersCount = 0;
 var documentTitle = document.title;
@@ -149,8 +149,12 @@ function countVisibleReminders() {
    return 0;
 }
 
+function singularOrPlural(word, count) {
+   return word + ((count === 1) ? "" : "s");
+}
+
 function buildNotificationMessage(type, count) {
-   return "You have " + count + " new " + type + ((count === 1) ? "" : "s");
+   return "You have " + count + " new " + singularOrPlural(type, count);
 }
 
 function buildEmailNotificationMessage(count) {
@@ -182,18 +186,37 @@ function checkForNewMessages() {
    visibleRemindersCount = newVisibleRemindersCount;
 }
 
+function notifyReminders() {
+   if (visibleRemindersCount > 0) {
+      self.port.emit("notify", "reminder", "You have " + visibleRemindersCount + " " + singularOrPlural("reminder", visibleRemindersCount));
+   }
+}
+
 function setNewPrefs(newPrefs) {
    prefs = newPrefs;
    if (prefs.delayBetweenChecks < 1) {
       prefs.delayBetweenChecks = 1;
    }
+   if (prefs.delayBetweenReminders > 0 && prefs.delayBetweenReminders < 4) {
+      prefs.delayBetweenReminders = 4;
+   }
+}
+
+function stopTimers() {
+   if (newEventsTimer) {
+      clearInterval(newEventsTimer);
+   }
+   if (remindersTimer) {
+      clearInterval(remindersTimer);
+   }
 }
 
 function startMonitor() {
-   if (timer) {
-      clearInterval(timer);
+   stopTimers();
+   newEventsTimer = setInterval(checkForNewMessages, prefs.delayBetweenChecks * 1000);
+   if (prefs.delayBetweenReminders) {
+      remindersTimer = setInterval(notifyReminders, prefs.delayBetweenReminders * 1000);
    }
-   timer = setInterval(checkForNewMessages, prefs.delayBetweenChecks * 1000);
 }
 
 self.port.on("startMonitor", function (newPrefs) {
@@ -208,13 +231,13 @@ self.port.on("prefChange", function (prefName, newPrefs) {
       setDocumentTitle(0);
    }
    setNewPrefs(newPrefs);
-   if (prefName === "delayBetweenChecks") {
+   if (prefName === "delayBetweenChecks" || prefName === "delayBetweenReminders") {
       startMonitor();
    }
 });
 
 self.port.on("detach", function () {
-   clearInterval(timer);
+   stopTimers();
    setFavicon(0);
    setDocumentTitle(0);
 });
