@@ -18,16 +18,20 @@ To get the same result for OWA 2013 the css selector is:
 The latest approved version of this extension can be installed from [Mozilla's add-ons website](https://addons.mozilla.org/en-US/firefox/addon/outlook-web-app-notifications/) or check the [github releases](https://github.com/mihai-chezan/owa_notifications_firefox_extension/releases) for latest builds.
 
 
-![Notification when tab is not active](https://raw.githubusercontent.com/mihai-chezan/owa_notifications_firefox_extension/master/doc/tab-normal.png "Notification when tab is not active")
+![Email notification when tab is not active](https://raw.githubusercontent.com/mihai-chezan/owa_notifications_firefox_extension/master/doc/tab-normal.png "Notification when tab is not active")
 
-![Notification when tab is pinned and not active](https://raw.githubusercontent.com/mihai-chezan/owa_notifications_firefox_extension/master/doc/tab-pinned.png "Notification when tab is pinned and not active")
+![Email notification when tab is pinned and not active](https://raw.githubusercontent.com/mihai-chezan/owa_notifications_firefox_extension/master/doc/tab-pinned.png "Notification when tab is pinned and not active")
 
-![Notification when tab is active](https://raw.githubusercontent.com/mihai-chezan/owa_notifications_firefox_extension/master/doc/tab-active.png "Notification when tab is active")
+![Email notification when tab is active](https://raw.githubusercontent.com/mihai-chezan/owa_notifications_firefox_extension/master/doc/tab-active.png "Notification when tab is active")
 
-![Notification when tab is pinned and active](https://raw.githubusercontent.com/mihai-chezan/owa_notifications_firefox_extension/master/doc/tab-pinned-active.png "Notification when tab is pinned and active")
+![Email notification when tab is pinned and active](https://raw.githubusercontent.com/mihai-chezan/owa_notifications_firefox_extension/master/doc/tab-pinned-active.png "Notification when tab is pinned and active")
 
-![Notification and browser taskbar when other window is active and in focus](https://raw.githubusercontent.com/mihai-chezan/owa_notifications_firefox_extension/master/doc/taskbar.png "Notification and browser taskbar when other window is active and in focus")
+![Email notification and browser taskbar when other window is active and in focus](https://raw.githubusercontent.com/mihai-chezan/owa_notifications_firefox_extension/master/doc/taskbar.png "Notification and browser taskbar when other window is active and in focus")
 
+![Reminder notification and browser taskbar when other window is active and in focus](https://raw.githubusercontent.com/mihai-chezan/owa_notifications_firefox_extension/master/doc/taskbar-reminder.png "Reminder notification and browser taskbar when other window is active and in focus")
 
+![Reminder notification when tab is active](https://raw.githubusercontent.com/mihai-chezan/owa_notifications_firefox_extension/master/doc/tab-active-reminder.png "Reminder notification when tab is active")
+
+![Preferences](https://raw.githubusercontent.com/mihai-chezan/owa_notifications_firefox_extension/master/doc/preferences.png "Preferences")
 
 Note: this started as a fork of [OWA_firefox_addon by Phil Baranovskiy](https://github.com/rockfield/owa_firefox_addon).
