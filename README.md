@@ -14,6 +14,8 @@ For OWA 2010 the css selector to monitor only Folder1 and Folder2 is:
 `[fldrnm='Folder1'] + #spnUC #spnCV, [fldrnm='Folder2'] + #spnUC #spnCV`  
 To get the same result for OWA 2013 the css selector is:  
 `[aria-label='Folder Pane'] [title='Folder1'] ~ [id*='.ucount'], [aria-label='Folder Pane'] [title='Folder2'] ~ [id*='.ucount']`
+In case of X-OWA-ClientBuildVersion:"15.0.847.41" to monitor only Inbox folder the css selector is:
+`span[title="Inbox"] ~ ._n_07`
 
 The latest approved version of this extension can be installed from [Mozilla's add-ons website](https://addons.mozilla.org/en-US/firefox/addon/outlook-web-app-notifications/) or check the [github releases](https://github.com/mihai-chezan/owa_notifications_firefox_extension/releases) for latest builds.
 
