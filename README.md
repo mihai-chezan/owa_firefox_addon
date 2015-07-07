@@ -13,7 +13,7 @@ With the release of version 1.6.0 users can define their own css selectors for u
 For OWA 2010 the css selector to monitor only Folder1 and Folder2 is:  
 `[fldrnm='Folder1'] + #spnUC #spnCV, [fldrnm='Folder2'] + #spnUC #spnCV`  
 To get the same result for OWA 2013 the css selector is:  
-`[aria-label='Folder Pane'] [title='Folder1'] ~ [id*='.ucount'], [aria-label='Folder Pane'] [title='Folder2'] ~ [id*='.ucount']`
+`[aria-label='Folder Pane'] [title='Folder1'] ~ [id*='.ucount'], [aria-label='Folder Pane'] [title='Folder2'] ~ [id*='.ucount']`  
 In case of X-OWA-ClientBuildVersion:"15.0.847.41" to monitor only Inbox folder the css selector is:
 `span[title="Inbox"] ~ ._n_07`
 
