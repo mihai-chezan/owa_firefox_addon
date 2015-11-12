@@ -2,6 +2,7 @@ var prefs;
 var newEventsTimer, remindersTimer;
 var unreadEmailsCount = 0;
 var visibleRemindersCount = 0;
+var chatNotificationsCount = 0;
 var documentTitle = document.title;
 
 var owaIcon = document.createElement("link");
@@ -68,13 +69,13 @@ function setFavicon(count) {
    }
 }
 
-function setDocumentTitle(emails, reminders) {
+function setDocumentTitle(emails, reminders, chats) {
    if (!prefs.updateDocumentTitle) {
       return;
    }
    var countPrefix = "";
-   if (emails > 0 || reminders > 0) {
-      countPrefix = "(" + emails + "/" + reminders + ") ";
+   if (emails > 0 || reminders > 0 || chats > 0) {
+      countPrefix = "(" + emails + "/" + reminders + "/" + chats + ") ";
    }
    document.title = countPrefix + documentTitle;
 }
@@ -149,6 +150,10 @@ function countVisibleReminders() {
    return 0;
 }
 
+function countChatNotifications() {
+   return document.querySelectorAll(".o365cs-notifications-chat-accept").length;
+}
+
 function singularOrPlural(word, count) {
    return word + ((count === 1) ? "" : "s");
 }
@@ -168,12 +173,13 @@ function buildReminderNotificationMessage(count) {
 function checkForNewMessages() {
    var newUnreadEmailsCount = countUnreadEmails();
    var newVisibleRemindersCount = countVisibleReminders();
-   var noChange = (newUnreadEmailsCount === unreadEmailsCount) && (newVisibleRemindersCount === visibleRemindersCount);
+   var newChatNotificationsCount = countChatNotifications();
+   var noChange = (newUnreadEmailsCount === unreadEmailsCount) && (newVisibleRemindersCount === visibleRemindersCount) && (newChatNotificationsCount === chatNotificationsCount);
    if (noChange) {
       return;
    }
-   setFavicon(newUnreadEmailsCount + newVisibleRemindersCount);
-   setDocumentTitle(newUnreadEmailsCount, newVisibleRemindersCount);
+   setFavicon(newUnreadEmailsCount + newVisibleRemindersCount + newChatNotificationsCount);
+   setDocumentTitle(newUnreadEmailsCount, newVisibleRemindersCount, newChatNotificationsCount);
    if (newUnreadEmailsCount > unreadEmailsCount) {
       self.port.emit("notify", "email", buildEmailNotificationMessage(newUnreadEmailsCount - unreadEmailsCount));
    }
@@ -181,14 +187,21 @@ function checkForNewMessages() {
       self.port.emit("notify", "reminder", buildReminderNotificationMessage(newVisibleRemindersCount
             - visibleRemindersCount));
    }
+   if (newChatNotificationsCount > chatNotificationsCount) {
+      self.port.emit("notify", "chat", "New chat " + singularOrPlural("notification", newChatNotificationsCount) + "!");
+   }
 
    unreadEmailsCount = newUnreadEmailsCount;
    visibleRemindersCount = newVisibleRemindersCount;
+   chatNotificationsCount = newChatNotificationsCount;
 }
 
 function notifyReminders() {
    if (visibleRemindersCount > 0) {
       self.port.emit("notify", "reminder", "You have " + visibleRemindersCount + " " + singularOrPlural("reminder", visibleRemindersCount));
+   }
+   if (chatNotificationsCount > 0) {
+      self.port.emit("notify", "chat", "You have open chat " + singularOrPlural("notification", chatNotificationsCount));
    }
 }
 
