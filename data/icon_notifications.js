@@ -151,7 +151,8 @@ function countVisibleReminders() {
 }
 
 function countChatNotifications() {
-   return document.querySelectorAll(".o365cs-notifications-chat-accept").length;
+   // it finds twice the real number so split it by two
+   return (document.querySelectorAll(".o365cs-notifications-chat-accept").length >> 1);
 }
 
 function singularOrPlural(word, count) {
