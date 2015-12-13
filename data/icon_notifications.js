@@ -75,7 +75,11 @@ function setDocumentTitle(emails, reminders, chats) {
    }
    var countPrefix = "";
    if (emails > 0 || reminders > 0 || chats > 0) {
-      countPrefix = "(" + emails + "/" + reminders + "/" + chats + ") ";
+      countPrefix = "(" + emails + "/" + reminders;
+      if (chats > 0) {
+         countPrefix = countPrefix + "/" + chats;
+      }
+      countPrefix = countPrefix + ") ";
    }
    document.title = countPrefix + documentTitle;
 }
