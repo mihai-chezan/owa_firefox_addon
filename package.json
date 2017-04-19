@@ -3,12 +3,20 @@
   "name": "owa_notifications",
   "title": "Outlook Web App Notifications",
   "description": "Add system notifications capability to OWA (Outlook Web App). No configuration needed. System notifications about new emails or reminders are shown, the fav icon and OWA tab title are also updated with the unread email/reminder count.",
-  "icon": "data/icon.png",
+  "icon": "resource://@owa_notifications/data/icon.png",
   "homepage": "https://github.com/mihai-chezan/owa_notifications_firefox_extension",
   "author": "Mihai Chezan",
   "contributors": ["Phil Baranovskiy"],
   "license": "MPL 2.0",
-  "version": "1.7.3",
+  "version": "1.7.4",
+  "engines": {
+      "firefox": ">= 49",
+      "fennec": ">= 49"
+  },
+  "permissions": {
+      "private-browsing": true,
+      "multiprocess": true
+  },
   "preferences": [{
       "name": "delayBetweenChecks",
       "title": "Seconds to wait between checks",
