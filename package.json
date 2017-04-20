@@ -8,15 +8,16 @@
   "author": "Mihai Chezan",
   "contributors": ["Phil Baranovskiy"],
   "license": "MPL 2.0",
-  "version": "1.7.4",
+  "version": "1.8.0-alpha",
   "engines": {
-      "firefox": ">= 49",
-      "fennec": ">= 49"
+      "firefox": ">= 52",
+      "fennec": ">= 52"
   },
   "permissions": {
       "private-browsing": true,
       "multiprocess": true
   },
+  "hasEmbeddedWebExtension": true,
   "preferences": [{
       "name": "delayBetweenChecks",
       "title": "Seconds to wait between checks",
