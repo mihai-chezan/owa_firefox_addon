@@ -7,7 +7,7 @@
   "author": "Mihai Chezan",
   "homepage_url": "https://github.com/mihai-chezan/owa_notifications_firefox_extension",
   "icons": {
-    "64": "icon.png"
+    "48": "icon.png"
   },
   "permissions": ["storage", "notifications"],
   "background": {

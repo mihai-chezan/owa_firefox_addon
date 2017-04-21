@@ -175,6 +175,17 @@ function buildReminderNotificationMessage(count) {
    return buildNotificationMessage("reminder", count);
 }
 
+function triggerNotification(type, text) {
+  //self.port.emit("notify", type, msg);
+  browser.runtime.sendMessage({
+    "type": "notify",
+    "obj": {
+      "type": type,
+      "msg": text
+    }
+  });
+}
+
 function checkForNewMessages() {
    var newUnreadEmailsCount = countUnreadEmails();
    var newVisibleRemindersCount = countVisibleReminders();
@@ -186,14 +197,14 @@ function checkForNewMessages() {
    setFavicon(newUnreadEmailsCount + newVisibleRemindersCount + newChatNotificationsCount);
    setDocumentTitle(newUnreadEmailsCount, newVisibleRemindersCount, newChatNotificationsCount);
    if (newUnreadEmailsCount > unreadEmailsCount) {
-      self.port.emit("notify", "email", buildEmailNotificationMessage(newUnreadEmailsCount - unreadEmailsCount));
+      triggerNotification("email", buildEmailNotificationMessage(newUnreadEmailsCount - unreadEmailsCount));
    }
    if (newVisibleRemindersCount > visibleRemindersCount) {
-      self.port.emit("notify", "reminder", buildReminderNotificationMessage(newVisibleRemindersCount
+      triggerNotification("reminder", buildReminderNotificationMessage(newVisibleRemindersCount
             - visibleRemindersCount));
    }
    if (newChatNotificationsCount > chatNotificationsCount) {
-      self.port.emit("notify", "chat", "New chat " + singularOrPlural("notification", newChatNotificationsCount) + "!");
+      triggerNotification("chat", "New chat " + singularOrPlural("notification", newChatNotificationsCount) + "!");
    }
 
    unreadEmailsCount = newUnreadEmailsCount;
@@ -203,10 +214,10 @@ function checkForNewMessages() {
 
 function notifyReminders() {
    if (visibleRemindersCount > 0) {
-      self.port.emit("notify", "reminder", "You have " + visibleRemindersCount + " " + singularOrPlural("reminder", visibleRemindersCount));
+      triggerNotification("reminder", "You have " + visibleRemindersCount + " " + singularOrPlural("reminder", visibleRemindersCount));
    }
    if (chatNotificationsCount > 0) {
-      self.port.emit("notify", "chat", "You have open chat " + singularOrPlural("notification", chatNotificationsCount));
+      triggerNotification("chat", "You have open chat " + singularOrPlural("notification", chatNotificationsCount));
    }
 }
 
@@ -238,8 +249,8 @@ function startMonitor() {
 }
 
 function onGotPrefs(prefs) {
-  console.log(changes);
-  setNewPrefs(newPrefs);
+  console.log("onGotPrefs: ", prefs);
+  setNewPrefs(prefs);
   startMonitor();
 }
 
@@ -248,7 +259,7 @@ function getPrefsAndStart() {
 }
 
 function onPrefChanged(changes, area) {
-  console.log(changes);
+  console.log("onPrefChanged: ", changes);
   if (changes.updateFavIcon !== undefined && !changes.updateFavIcon.newValue) {
     setFavicon(0);
   }

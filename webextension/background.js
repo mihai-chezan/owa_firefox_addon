@@ -11,17 +11,20 @@ port.onMessage.addListener((msg) => {
   }
 });
 
+function showNotification(notif) {
+  browser.notifications.create({
+    "type": "basic",
+    "iconUrl": browser.extension.getURL("email-alert.png"),
+    "title": "Time for cake!",
+    "message": notif.msg
+  }).catch(console.error);    
+}
+
+const dispatch = {
+  "notify": showNotification
+};
+
 browser.runtime.onMessage.addListener(msg => {
   console.log("received onMessage on background script: ", msg);
-  const {type} = msg;
-
-  switch (type) {
-  case "notify-attached-tab":
-    browser.notifications.create({
-      type: "basic",
-      title: "Attached to tab",
-      message: msg.message
-    });
-    break;
-  }
+  dispatch[msg.type](msg.obj);
 });
