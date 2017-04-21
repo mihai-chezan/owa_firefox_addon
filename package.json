@@ -3,7 +3,7 @@
   "name": "owa_notifications",
   "title": "Outlook Web App Notifications",
   "description": "Add system notifications capability to OWA (Outlook Web App). No configuration needed. System notifications about new emails or reminders are shown, the fav icon and OWA tab title are also updated with the unread email/reminder count.",
-  "icon": "resource://@owa_notifications/data/icon.png",
+  "icon": "resource://@owa_notifications/webextension/icon.png",
   "homepage": "https://github.com/mihai-chezan/owa_notifications_firefox_extension",
   "author": "Mihai Chezan",
   "contributors": ["Phil Baranovskiy"],
