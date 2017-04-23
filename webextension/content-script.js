@@ -176,7 +176,6 @@ function buildReminderNotificationMessage(count) {
 }
 
 function triggerNotification(type, text) {
-  // self.port.emit("notify", type, msg);
   browser.runtime.sendMessage({
 	"type" : "notify",
 	"obj" : {

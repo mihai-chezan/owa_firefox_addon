@@ -13,11 +13,17 @@ browser.storage.local.get("delayBetweenChecks").then(prefs => {
 }, console.error);
 }, console.error);
 
+const notifIcons = {
+  "email": browser.extension.getURL("email-alert.png"),
+  "reminder": browser.extension.getURL("calendar-alert.png"),
+  "chat": browser.extension.getURL("chat-alert.png")
+}
+
 function showNotification(notif) {
   browser.notifications.create({
     "type": "basic",
-    "iconUrl": browser.extension.getURL("email-alert.png"),
-    "title": "Time for cake!",
+    "iconUrl": notifIcons[notif.type],
+    "title": notif.msg,
     "message": notif.msg
   }).catch(console.error);
 }
