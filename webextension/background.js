@@ -1,15 +1,18 @@
 "use strict";
-
-// Ask to the legacy part to dump the needed data and send it back
-// to the background page...
-const port = browser.runtime.connect({name: "sync-legacy-addon-data"});
-port.onMessage.addListener((msg) => {
-  if (msg) {
-    // Where it can be saved using the WebExtensions storage API.
-    browser.storage.local.set(msg);
-    console.log("prefs received and saved into background script: ", msg);
+browser.storage.local.clear().then(() => {
+browser.storage.local.get("delayBetweenChecks").then(prefs => {
+  console.log("onGotPrefs: ", prefs);
+  if (!prefs.delayBetweenChecks) {
+	console.log("loading legacy prefs...");
+	// we didin't sync legacy prefs, so we do it now
+	const port = browser.runtime.connect({"name": "sync-legacy-prefs"});
+	port.onMessage.addListener((legacyPrefs) => {
+	  browser.storage.local.set(legacyPrefs);
+	  console.log("legacy prefs received and saved into background script: ", legacyPrefs);
+	});
   }
-});
+}, console.error);
+}, console.error);
 
 function showNotification(notif) {
   browser.notifications.create({
@@ -17,7 +20,7 @@ function showNotification(notif) {
     "iconUrl": browser.extension.getURL("email-alert.png"),
     "title": "Time for cake!",
     "message": notif.msg
-  }).catch(console.error);    
+  }).catch(console.error);
 }
 
 const dispatch = {
