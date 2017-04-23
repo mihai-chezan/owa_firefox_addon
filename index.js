@@ -1,7 +1,7 @@
 require("sdk/webextension").startup().then(({browser}) => {
-  browser.runtime.onConnect.addListener(port => {
-    if (port.name === "sync-legacy-prefs") {
-      port.postMessage(require('sdk/simple-prefs').prefs);
+  browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+    if (msg.cmd === "get-prefs") {
+      sendResponse(require('sdk/simple-prefs').prefs);
     }
   });
 });

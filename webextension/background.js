@@ -5,11 +5,10 @@ browser.storage.local.get("delayBetweenChecks").then(prefs => {
   if (!prefs.delayBetweenChecks) {
 	console.log("loading legacy prefs...");
 	// we didin't sync legacy prefs, so we do it now
-	const port = browser.runtime.connect({"name": "sync-legacy-prefs"});
-	port.onMessage.addListener((legacyPrefs) => {
+	browser.runtime.sendMessage({"cmd": "get-prefs"}).then((legacyPrefs) => {
 	  browser.storage.local.set(legacyPrefs);
 	  console.log("legacy prefs received and saved into background script: ", legacyPrefs);
-	});
+	}, console.error);
   }
 }, console.error);
 }, console.error);
