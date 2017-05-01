@@ -2,7 +2,7 @@
 browser.storage.local.clear().then(() => {
 browser.storage.local.get("delayBetweenChecks").then(prefs => {
   console.log("onGotPrefs: ", prefs);
-  if (!prefs.delayBetweenChecks) {
+  if (prefs.delayBetweenChecks === undefined) {
 	console.log("loading legacy prefs...");
 	// we didin't sync legacy prefs, so we do it now
 	browser.runtime.sendMessage({"cmd": "get-prefs"}).then((legacyPrefs) => {

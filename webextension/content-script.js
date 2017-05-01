@@ -222,10 +222,10 @@ function notifyReminders() {
 
 function setNewPrefs(newPrefs) {
   prefs = newPrefs;
-  if (prefs.delayBetweenChecks < 1) {
+  if (prefs.delayBetweenChecks === undefined || prefs.delayBetweenChecks < 1) {
 	prefs.delayBetweenChecks = 1;
   }
-  if (prefs.delayBetweenReminders > 0 && prefs.delayBetweenReminders < 4) {
+  if (prefs.delayBetweenReminders === undefined || (prefs.delayBetweenReminders > 0 && prefs.delayBetweenReminders < 4)) {
 	prefs.delayBetweenReminders = 4;
   }
 }

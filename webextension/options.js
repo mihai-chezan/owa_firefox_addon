@@ -3,18 +3,28 @@
 function saveOptions(e) {
   e.preventDefault();
   browser.storage.local.set({
-    delayBetweenChecks: document.querySelector("#delayBetweenChecks").value
+    delayBetweenChecks: document.querySelector("#delayBetweenChecks").value,
+    delayBetweenReminders: document.querySelector("#delayBetweenReminders").value,
+    updateFavIcon: document.querySelector("#updateFavIcon").checked,
+    updateDocumentTitle: document.querySelector("#updateDocumentTitle").checked,
+    cssForUnreadEmailsDetection: document.querySelector("#cssForUnreadEmailsDetection").value,
+    cssForVisibleRemindersDetection: document.querySelector("#cssForVisibleRemindersDetection").value
   });
 }
 
+function defaultVal(value, defaultValue){
+  return (value === undefined) ? defaultValue : value;
+}
+
 function restoreOptions() {
-
-  function setCurrentChoice(result) {
-    document.querySelector("#delayBetweenChecks").value = result.delayBetweenChecks || "1";
-  }
-
-  var getting = browser.storage.local.get("delayBetweenChecks");
-  getting.then(setCurrentChoice, console.error);
+  browser.storage.local.get().then((prefs) => {
+    document.querySelector("#delayBetweenChecks").value = defaultVal(prefs.delayBetweenChecks, 1);
+    document.querySelector("#delayBetweenReminders").value = defaultVal(prefs.delayBetweenReminders, 300);
+    document.querySelector("#updateFavIcon").checked = defaultVal(prefs.updateFavIcon, true);
+    document.querySelector("#updateDocumentTitle").checked = defaultVal(prefs.updateDocumentTitle, true);
+    document.querySelector("#cssForUnreadEmailsDetection").value = defaultVal(prefs.cssForUnreadEmailsDetection, "");
+    document.querySelector("#cssForVisibleRemindersDetection").value = defaultVal(prefs.cssForVisibleRemindersDetection, "");
+  }, console.error);
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);

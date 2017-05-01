@@ -8,7 +8,12 @@
   <body>
 
     <form>
-        <label>Seconds to wait between checks<input type="text" id="delayBetweenChecks" ></label>
+        <div><label>Seconds to wait between checks<input id="delayBetweenChecks" type="number" min="1" required></label></div>
+        <div><label>Reminder snooze time<input id="delayBetweenReminders" type="number" min="0" required></label></div>
+        <div><label>Update Favicon<input id="updateFavIcon" type="checkbox"></label></div>
+        <div><label>Update Document Title<input id="updateDocumentTitle" type="checkbox"></label></div>
+        <div><label>Custom css selector for unread emails detection<input id="cssForUnreadEmailsDetection" type="text"></label></div>
+        <div><label>Custom css selector for reminders detection<input id="cssForVisibleRemindersDetection" type="text"></label></div>
         <button type="submit">Save</button>
     </form>
 
