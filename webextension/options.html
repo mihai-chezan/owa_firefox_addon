@@ -1,24 +1,119 @@
 <!DOCTYPE html>
-
 <html>
-  <head>
-    <meta charset="utf-8">
-  </head>
+<head>
+<meta charset="utf-8">
+<style>
+form {
+  font-size: 1.25rem;
+}
 
-  <body>
+legend {
+  padding: 0 0.5rem;
+}
 
-    <form>
-        <div><label>Seconds to wait between checks<input id="delayBetweenChecks" type="number" min="1" required></label></div>
-        <div><label>Reminder snooze time<input id="delayBetweenReminders" type="number" min="0" required></label></div>
-        <div><label>Update Favicon<input id="updateFavIcon" type="checkbox"></label></div>
-        <div><label>Update Document Title<input id="updateDocumentTitle" type="checkbox"></label></div>
-        <div><label>Custom css selector for unread emails detection<input id="cssForUnreadEmailsDetection" type="text"></label></div>
-        <div><label>Custom css selector for reminders detection<input id="cssForVisibleRemindersDetection" type="text"></label></div>
-        <button type="submit">Save</button>
-    </form>
+.pref-container {
+  display: flex;
+}
 
-    <script src="options.js"></script>
+.pref-description {
+  flex: 1;
+  margin-right: 1em;
+}
 
-  </body>
+.pref-explanation {
+  font-size: smaller;
+  color: graytext;
+  margin: -0.1em 0.5em 0.5em 2em;
+}
 
+.pref-input {
+  flex: 2;
+  padding-right: 1em;
+}
+
+.pref-input>input[type="number"] {
+  width: 100%;
+}
+
+.pref-input>input[type="text"] {
+  width: 100%;
+}
+
+button {
+  font-size: 1em;
+  padding: 0.2em 1em;
+}
+</style>
+</head>
+<body>
+  <form>
+    <fieldset>
+      <legend>Settings:</legend>
+      <div class="pref-container">
+        <div class="pref-description">
+          <label for="delayBetweenChecks">Seconds to wait between checks</label>
+          <div class="pref-explanation">Controls how fast new emails/reminders are detected and notifications will appear. Lower value
+            means faster reaction. Minimum allowed value is 1.</div>
+        </div>
+        <div class="pref-input">
+          <input id="delayBetweenChecks" type="number" min="1" required>
+        </div>
+      </div>
+      <div class="pref-container">
+        <div class="pref-description">
+          <label for="delayBetweenReminders">Reminder snooze time</label>
+          <div class="pref-explanation">When reminders are not dismissed/snoozed a reminder notification will keep showing up every
+            'Reminder snooze time' seconds. Set this to zero to disable it.</div>
+        </div>
+        <div class="pref-input">
+          <input id="delayBetweenReminders" type="number" min="0" required>
+        </div>
+      </div>
+      <div class="pref-container">
+        <div class="pref-description">
+          <label for="updateFavIcon">Update Favicon</label>
+          <div class="pref-explanation">Toggle for updating the favicon.</div>
+        </div>
+        <div class="pref-input">
+          <input id="updateFavIcon" type="checkbox">
+        </div>
+      </div>
+      <div class="pref-container">
+        <div class="pref-description">
+          <label for="updateDocumentTitle">Update Document Title</label>
+          <div class="pref-explanation">Toggle for updating document title.</div>
+        </div>
+        <div class="pref-input">
+          <input id="updateDocumentTitle" type="checkbox">
+        </div>
+      </div>
+      <div class="pref-container">
+        <div class="pref-description">
+          <label for="cssForUnreadEmailsDetection">Custom css selector for unread emails detection</label>
+          <div class="pref-explanation">In case number of unread emails is not showing at all or you only want certain folders to be
+            included you can use this to customize what is counted as unread email. You need to have html/css knowledge in order to use it.
+            If any value is entered here it will be used as an override to the existing code/behaviour. As an example for OWA 2010 this css
+            selector "[fldrnm='Inbox'] + #spnUC #spnCV" will only count unread emails from Inbox folder.</div>
+        </div>
+        <div class="pref-input">
+          <input id="cssForUnreadEmailsDetection" type="text">
+        </div>
+      </div>
+      <div class="pref-container">
+        <div class="pref-description">
+          <label for="cssForVisibleRemindersDetection">Custom css selector for reminders detection</label>
+          <div class="pref-explanation">In case reminders notifications are not working you can use this to customize the css selector
+            used to detect reminders. You need to have html/css knowledge in order to use it. If any value is entered here it will be used
+            as an override to the existing code/behaviour. As an example for OWA 2010 this css selector "#lnkRm > #spnRmT.alertBtnTxt" is
+            used to detect reminders.</div>
+        </div>
+        <div class="pref-input">
+          <input id="cssForVisibleRemindersDetection" type="text">
+        </div>
+      </div>
+      <button type="submit">Save</button>
+    </fieldset>
+  </form>
+  <script src="options.js"></script>
+</body>
 </html>
