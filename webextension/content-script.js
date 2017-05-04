@@ -155,6 +155,9 @@ function countVisibleReminders() {
 }
 
 function countChatNotifications() {
+  if (prefs.cssForChatNotificationsDetection) {
+    return getCountFromNodes(document.querySelectorAll(prefs.cssForChatNotificationsDetection));
+  }
   // it finds twice the real number so split it by two
   return (document.querySelectorAll(".o365cs-notifications-chat-accept").length >> 1);
 }
@@ -177,11 +180,8 @@ function buildReminderNotificationMessage(count) {
 
 function triggerNotification(type, text) {
   browser.runtime.sendMessage({
-	"type" : "notify",
-	"obj" : {
-	  "type" : type,
-	  "msg" : text
-	}
+	"type" : type,
+	"msg": text
   });
 }
 

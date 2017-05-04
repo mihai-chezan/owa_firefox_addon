@@ -8,7 +8,8 @@ function saveOptions(e) {
     updateFavIcon: document.querySelector("#updateFavIcon").checked,
     updateDocumentTitle: document.querySelector("#updateDocumentTitle").checked,
     cssForUnreadEmailsDetection: document.querySelector("#cssForUnreadEmailsDetection").value,
-    cssForVisibleRemindersDetection: document.querySelector("#cssForVisibleRemindersDetection").value
+    cssForVisibleRemindersDetection: document.querySelector("#cssForVisibleRemindersDetection").value,
+    cssForChatNotificationsDetection: document.querySelector("#cssForChatNotificationsDetection").value
   });
 }
 
@@ -24,6 +25,7 @@ function restoreOptions() {
     document.querySelector("#updateDocumentTitle").checked = defaultVal(prefs.updateDocumentTitle, true);
     document.querySelector("#cssForUnreadEmailsDetection").value = defaultVal(prefs.cssForUnreadEmailsDetection, "");
     document.querySelector("#cssForVisibleRemindersDetection").value = defaultVal(prefs.cssForVisibleRemindersDetection, "");
+    document.querySelector("#cssForChatNotificationsDetection").value = defaultVal(prefs.cssForChatNotificationsDetection, "");
   }, console.error);
 }
 
