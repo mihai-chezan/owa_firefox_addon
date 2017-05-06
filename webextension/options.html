@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <style>
+*,*:before,*:after {
+  box-sizing: border-box;
+}
+
 form {
   font-size: 1.25rem;
 }
@@ -28,14 +32,17 @@ legend {
 
 .pref-input {
   flex: 2;
-  padding-right: 1em;
 }
 
-.pref-input>input[type="number"] {
+.pref-input > input[type="number"] {
   width: 100%;
 }
 
-.pref-input>input[type="text"] {
+.pref-input > input[type="text"] {
+  width: 100%;
+}
+
+.pref-input > select {
   width: 100%;
 }
 
@@ -89,38 +96,52 @@ button {
       </div>
       <div class="pref-container">
         <div class="pref-description">
-          <label for="cssForUnreadEmailsDetection">Custom css selector for unread emails detection</label>
+          <label for="selectCssForUnreadEmailsDetection">Css selector for unread emails detection</label>
           <div class="pref-explanation">In case number of unread emails is not showing at all or you only want certain folders to be
-            included you can use this to customize what is counted as unread email. You need to have html/css knowledge in order to use it.
-            If any value is entered here it will be used as an override to the existing code/behaviour. As an example for OWA 2010 this css
-            selector "[fldrnm='Inbox'] + #spnUC #spnCV" will only count unread emails from Inbox folder.</div>
+            included you can use this to customize what is counted as unread email. You can try a predefined option or define one yourself
+            selecting the "Custom" option and entering in the edit box the css you want (some html/css knowledge might be needed).</div>
         </div>
         <div class="pref-input">
+          <select id="selectCssForUnreadEmailsDetection">
+            <option value=''>Auto</option>
+            <option value=''>Custom</option>
+            <option value='span[title="Inbox"] + div > span'>OWA 365 Personal (just Inbox)</option>
+            <option value='.treeHeaderContainer + [id="MailFolderPane.FavoritesFolders"] [title="Inbox"] + div > span'>OWA 365 Enterprise (just Inbox from Favorites)</option>
+          </select>
           <input id="cssForUnreadEmailsDetection" type="text">
         </div>
       </div>
       <div class="pref-container">
         <div class="pref-description">
-          <label for="cssForVisibleRemindersDetection">Custom css selector for reminders detection</label>
-          <div class="pref-explanation">In case reminders notifications are not working you can use this to customize the css selector
-            used to detect reminders. You need to have html/css knowledge in order to use it. If any value is entered here it will be used
-            as an override to the existing code/behaviour. As an example for OWA 2010 this css selector "#lnkRm > #spnRmT.alertBtnTxt" is
-            used to detect reminders.</div>
+          <label for="selectCssForVisibleRemindersDetection">Css selector for reminders detection</label>
+          <div class="pref-explanation">In case reminders notifications are not working, you can use this to customize the css
+            selector used to detect reminders. You can try a predefined option or define one yourself selecting the "Custom" option and
+            entering in the edit box the css you want (some html/css knowledge might be needed).</div>
         </div>
         <div class="pref-input">
+          <select id="selectCssForVisibleRemindersDetection">
+            <option value=''>Auto</option>
+            <option value=''>Custom</option>
+            <option value='.o365cs-notifications-notificationPopup .o365cs-notifications-notificationHeaderText'>OWA 365 Personal</option>
+            <option value='.o365cs-flexPane-unseenCount'>OWA 365 Enterprise</option>
+          </select>
           <input id="cssForVisibleRemindersDetection" type="text">
         </div>
       </div>
       <div class="pref-container">
         <div class="pref-description">
-          <label for="cssForChatNotificationsDetection">Custom css selector for chat detection</label>
-          <div class="pref-explanation">In case chat notifications are not working you can use this to customize the css selector used
-            to detect chat messages. You need to have html/css knowledge in order to use it. If any value is entered here it will be used as
-            an override to the existing code/behaviour. As an example for OWA 365 this css selector "div.o365cs-flexPane-unseenitems
-            span.o365cs-flexPane-unseenCount.o365cs-notifications-notificationPopup .o365cs-notifications-notificationHeaderText" is used to
-            detect reminders.</div>
+          <label for="selectCssForChatNotificationsDetection">Css selector for chat detection</label>
+          <div class="pref-explanation">In case chat notifications are not working, you can use this to customize the css selector
+            used to detect chat messages. You can try a predefined option or define one yourself selecting the "Custom" option and entering
+            in the edit box the css you want (some html/css knowledge might be needed).</div>
         </div>
         <div class="pref-input">
+          <select id="selectCssForChatNotificationsDetection">
+            <option value=''>Auto</option>
+            <option value=''>Custom</option>
+            <option value='div.o365cs-flexPane-unseenitems span.o365cs-flexPane-unseenCount.o365cs-notifications-notificationPopup .o365cs-notifications-notificationHeaderText'>OWA 365 Personal</option>
+            <option value='.o365cs-notifications-chat-accept'>OWA 365 Enterprise</option>
+          </select>
           <input id="cssForChatNotificationsDetection" type="text">
         </div>
       </div>
