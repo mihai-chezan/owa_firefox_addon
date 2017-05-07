@@ -105,6 +105,12 @@ button {
           <select id="selectCssForUnreadEmailsDetection">
             <option value=''>Auto</option>
             <option value=''>Custom</option>
+            <option value='#mailtree #spnUC #spnCV'>OWA 2010 (ignore favourites)</option>
+            <option value='[fldrnm="Unread Mail"] + #spnUC #spnCV'>OWA 2010 (Unread Mail virtual folder)</option>
+            <option value='[fldrnm="Inbox"] + #spnUC #spnCV'>OWA 2010 (just Inbox)</option>
+            <option value='[aria-label="Folder Pane"] [title="Inbox"] ~ [id*=".ucount"]'>OWA 2013 v1 (just Inbox)</option>
+            <option value='span[title="Inbox"] ~ ._n_07'>OWA 2013 v2 (just Inbox)</option>
+            <option value='span[title="Inbox"]._n_u4 ~._n_A4 ._n_x4[autoid]'>OWA 2013 v3 (just Inbox)</option>
             <option value='span[title="Inbox"] + div > span'>OWA 365 Personal (just Inbox)</option>
             <option value='.treeHeaderContainer + [id="MailFolderPane.FavoritesFolders"] [title="Inbox"] + div > span'>OWA 365 Enterprise (just Inbox from Favorites)</option>
           </select>
@@ -139,7 +145,7 @@ button {
           <select id="selectCssForChatNotificationsDetection">
             <option value=''>Auto</option>
             <option value=''>Custom</option>
-            <option value='div.o365cs-flexPane-unseenitems span.o365cs-flexPane-unseenCount.o365cs-notifications-notificationPopup .o365cs-notifications-notificationHeaderText'>OWA 365 Personal</option>
+            <option value='#O365_Lync_ButtonID div.o365cs-flexPane-unseenitems span.o365cs-flexPane-unseenCount'>OWA 365 Personal</option>
             <option value='.o365cs-notifications-chat-accept'>OWA 365 Enterprise</option>
           </select>
           <input id="cssForChatNotificationsDetection" type="text">
