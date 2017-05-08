@@ -1,6 +1,5 @@
 "use strict";
 
-browser.storage.local.clear().then(() => {
 browser.storage.local.get("delayBetweenChecks").then(prefs => {
   console.log("onGotPrefs: ", prefs);
   if (prefs.delayBetweenChecks === undefined) {
@@ -12,7 +11,6 @@ browser.storage.local.get("delayBetweenChecks").then(prefs => {
 	  }, console.error);
 	}, console.error);
   }
-}, console.error);
 }, console.error);
 
 const notifIcons = {
