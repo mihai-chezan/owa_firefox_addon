@@ -179,10 +179,12 @@ function buildReminderNotificationMessage(count) {
 }
 
 function triggerNotification(type, text) {
-  browser.runtime.sendMessage({
-	"type" : type,
-	"msg": text
-  });
+  if (!prefs.disableNotifications) {
+    browser.runtime.sendMessage({
+      "type" : type,
+      "msg": text
+    });
+  }
 }
 
 function checkForNewMessages() {

@@ -5,6 +5,7 @@ function saveOptions(e) {
   browser.storage.local.set({
     delayBetweenChecks: document.querySelector("#delayBetweenChecks").value,
     delayBetweenReminders: document.querySelector("#delayBetweenReminders").value,
+    disableNotifications: document.querySelector("#disableNotifications").checked,
     updateFavIcon: document.querySelector("#updateFavIcon").checked,
     updateDocumentTitle: document.querySelector("#updateDocumentTitle").checked,
     cssForUnreadEmailsDetection: document.querySelector("#cssForUnreadEmailsDetection").value,
@@ -14,7 +15,7 @@ function saveOptions(e) {
 }
 
 function defaultVal(value, defaultValue){
-  return (value === undefined) ? defaultValue : value;
+  return (typeof value === "undefined") ? defaultValue : value;
 }
 
 function hide(e) {
@@ -43,6 +44,7 @@ function restoreOptions() {
   browser.storage.local.get().then((prefs) => {
     document.querySelector("#delayBetweenChecks").value = defaultVal(prefs.delayBetweenChecks, 1);
     document.querySelector("#delayBetweenReminders").value = defaultVal(prefs.delayBetweenReminders, 300);
+    document.querySelector("#disableNotifications").checked = defaultVal(prefs.disableNotifications, false);
     document.querySelector("#updateFavIcon").checked = defaultVal(prefs.updateFavIcon, true);
     document.querySelector("#updateDocumentTitle").checked = defaultVal(prefs.updateDocumentTitle, true);
     setCss("#cssForUnreadEmailsDetection", "#selectCssForUnreadEmailsDetection", prefs.cssForUnreadEmailsDetection);
