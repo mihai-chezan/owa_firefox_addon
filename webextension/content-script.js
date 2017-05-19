@@ -147,9 +147,13 @@ function countVisibleReminders() {
 	// OWA 2013
 	return extractNumber(nodes[3].title);
   }
+  if ((nodes = document.querySelectorAll(".o365cs-notifications-notificationPopup .o365cs-notifications-notificationHeaderText")).length > 0) {
+    // 365 new check
+    return getCountFromNodes(nodes);
+  }
   if ((nodes = document.querySelectorAll(".o365cs-notifications-notificationCounter")).length > 0) {
-	// 365 check
-	return extractNumber(nodes[0].innerHTML);
+    // 365 old check
+    return extractNumber(nodes[0].innerHTML);
   }
   return 0;
 }
