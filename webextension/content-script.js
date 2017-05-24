@@ -1,0 +1,289 @@
+"use strict";
+
+let prefs;
+let newEventsTimer, remindersTimer;
+let unreadEmailsCount = 0;
+let visibleRemindersCount = 0;
+let chatNotificationsCount = 0;
+const initialDocumentTitle = document.title;
+const initialOwaIcon = getCurrentFavIcon();
+const owaIcon = createIconElement();
+
+browser.storage.onChanged.addListener(onPrefChanged);
+
+getPrefsAndStart();
+
+function createIconElement() {
+  let icon = document.createElement("link");
+  icon.rel = "icon";
+  icon.type = "image/png";
+  icon.sizes = "16x16";
+  icon.href = generateTabIcon(0);
+  return icon;
+}
+
+function getCurrentFavIcon() {
+  let icons = document.head.querySelectorAll("link[rel*=icon]");
+  let icon;
+  if (icons.length > 0) {
+    icon = icons[icons.length-1];
+  } else {
+    icon = createIconElement();
+  }
+  return icon;
+}
+
+function generateTabIcon(number) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 16;
+  canvas.height = 16;
+  const ctx = canvas.getContext("2d");
+  // draw cliped circle (radius is bigger than canvas by 1px)
+  ctx.fillStyle="#0099FF";
+  ctx.beginPath();
+  ctx.arc(8, 8, 9, 0, 2*Math.PI);
+  ctx.fill();
+  // draw the number in center
+  ctx.font = "10px Helvetica";
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "center";
+  ctx.fillStyle = "white";
+  ctx.shadowBlur=1;
+  ctx.shadowColor="black";
+  ctx.shadowOffsetX=1;
+  ctx.shadowOffsetY=1;
+  ctx.fillText(number, 8, 8);
+  return canvas.toDataURL("image/png");
+}
+
+function restoreOriginalOwaIcon() {
+  document.head.appendChild(initialOwaIcon);
+}
+
+function setFavicon(count) {
+  const nr = Math.min(count, 99);
+  if (nr) {
+    owaIcon.href = generateTabIcon(nr);
+    document.head.appendChild(owaIcon);
+  } else {
+    restoreOriginalOwaIcon();
+  }
+}
+
+function restoreInitialDocumentTitle() {
+  document.title = initialDocumentTitle;
+}
+
+function setDocumentTitle(emails, reminders, chats) {
+  let countPrefix = "";
+  if (emails > 0 || reminders > 0 || chats > 0) {
+	countPrefix = "(" + emails + "/" + reminders;
+	if (chats > 0) {
+	  countPrefix = countPrefix + "/" + chats;
+	}
+	countPrefix = countPrefix + ") ";
+  }
+  document.title = countPrefix + initialDocumentTitle;
+}
+
+function extractNumber(text) {
+  if (text) {
+	let digits = text.match(/\d/gi);
+	if (digits) {
+	  return parseInt(digits.join(""), 10);
+	}
+  }
+  return 0;
+}
+
+function getCountFromNodes(nodes) {
+  let count = 0;
+  if (nodes) {
+	for (let i = nodes.length - 1; i >= 0; i--) {
+	  count += extractNumber(nodes[i].innerHTML);
+	}
+  }
+  return count;
+}
+
+function getItemsWithActiveCount(folder) {
+  return folder.querySelectorAll("[id*='.ucount']");
+}
+
+function getCountFromFolders(folders) {
+  let count = 0;
+  for (let i = folders.length - 1; i >= 0; i--) {
+	count += getCountFromNodes(getItemsWithActiveCount(folders[i]));
+  }
+  return count;
+}
+
+function countUnreadEmails() {
+  let nodes;
+  if (prefs.cssForUnreadEmailsDetection) {
+	// custom css
+	return getCountFromNodes(document.querySelectorAll(prefs.cssForUnreadEmailsDetection));
+  }
+  if ((nodes = document.querySelectorAll("#spnUC #spnCV")).length > 0) {
+	// OWA 2010
+	return getCountFromNodes(nodes);
+  }
+  if ((nodes = document.querySelectorAll("[aria-label='Folder Pane']")).length > 0) {
+	// OWA 2013
+	return getCountFromFolders(nodes);
+  }
+  return 0;
+}
+
+function countVisibleReminders() {
+  let nodes;
+  if (prefs.cssForVisibleRemindersDetection) {
+	// custom css
+	return getCountFromNodes(document.querySelectorAll(prefs.cssForVisibleRemindersDetection));
+  }
+  if ((nodes = document.querySelectorAll("#spnRmT.alertBtnTxt")).length > 0) {
+	// OWA 2010
+	return extractNumber(nodes[0].innerHTML);
+  }
+  if ((nodes = document.querySelectorAll("[aria-label='New Notification']")).length > 2) {
+	// OWA 2013
+	return extractNumber(nodes[3].title);
+  }
+  if ((nodes = document.querySelectorAll(".o365cs-notifications-notificationPopup .o365cs-notifications-notificationHeaderText")).length > 0) {
+    // 365 new check
+    return getCountFromNodes(nodes);
+  }
+  if ((nodes = document.querySelectorAll(".o365cs-notifications-notificationCounter")).length > 0) {
+    // 365 old check
+    return extractNumber(nodes[0].innerHTML);
+  }
+  return 0;
+}
+
+function countChatNotifications() {
+  if (prefs.cssForChatNotificationsDetection) {
+    return getCountFromNodes(document.querySelectorAll(prefs.cssForChatNotificationsDetection));
+  }
+  // it finds twice the real number so split it by two
+  return (document.querySelectorAll(".o365cs-notifications-chat-accept").length >> 1);
+}
+
+function singularOrPlural(word, count) {
+  return word + ((count === 1) ? "" : "s");
+}
+
+function buildNotificationMessage(type, count) {
+  return "You have " + count + " new " + singularOrPlural(type, count);
+}
+
+function buildEmailNotificationMessage(count) {
+  return buildNotificationMessage("email", count);
+}
+
+function buildReminderNotificationMessage(count) {
+  return buildNotificationMessage("reminder", count);
+}
+
+function triggerNotification(type, text) {
+  if (!prefs.disableNotifications) {
+    browser.runtime.sendMessage({
+      "type" : type,
+      "msg": text
+    });
+  }
+}
+
+function checkForNewMessages() {
+  let newUnreadEmailsCount = countUnreadEmails();
+  let newVisibleRemindersCount = countVisibleReminders();
+  let newChatNotificationsCount = countChatNotifications();
+  let noChange = (newUnreadEmailsCount === unreadEmailsCount) && (newVisibleRemindersCount === visibleRemindersCount)
+	  && (newChatNotificationsCount === chatNotificationsCount);
+  if (noChange) {
+	return;
+  }
+  if (prefs.updateFavIcon) {
+    setFavicon(newUnreadEmailsCount + newVisibleRemindersCount + newChatNotificationsCount);
+  }
+  if (prefs.updateDocumentTitle) {
+    setDocumentTitle(newUnreadEmailsCount, newVisibleRemindersCount, newChatNotificationsCount);
+  }
+  if (newUnreadEmailsCount > unreadEmailsCount) {
+	triggerNotification("email", buildEmailNotificationMessage(newUnreadEmailsCount - unreadEmailsCount));
+  }
+  if (newVisibleRemindersCount > visibleRemindersCount) {
+	triggerNotification("reminder", buildReminderNotificationMessage(newVisibleRemindersCount - visibleRemindersCount));
+  }
+  if (newChatNotificationsCount > chatNotificationsCount) {
+	triggerNotification("chat", "New chat " + singularOrPlural("notification", newChatNotificationsCount) + "!");
+  }
+
+  unreadEmailsCount = newUnreadEmailsCount;
+  visibleRemindersCount = newVisibleRemindersCount;
+  chatNotificationsCount = newChatNotificationsCount;
+}
+
+function notifyReminders() {
+  if (visibleRemindersCount > 0) {
+	triggerNotification("reminder", "You have " + visibleRemindersCount + " " + singularOrPlural("reminder", visibleRemindersCount));
+  }
+  if (chatNotificationsCount > 0) {
+	triggerNotification("chat", "You have open chat " + singularOrPlural("notification", chatNotificationsCount));
+  }
+}
+
+function setNewPrefs(newPrefs) {
+  prefs = newPrefs;
+  if (prefs.delayBetweenChecks === undefined || prefs.delayBetweenChecks < 1) {
+	prefs.delayBetweenChecks = 1;
+  }
+  if (prefs.delayBetweenReminders === undefined || (prefs.delayBetweenReminders > 0 && prefs.delayBetweenReminders < 4)) {
+	prefs.delayBetweenReminders = 4;
+  }
+}
+
+function stopTimers() {
+  if (newEventsTimer) {
+	clearInterval(newEventsTimer);
+  }
+  if (remindersTimer) {
+	clearInterval(remindersTimer);
+  }
+}
+
+function startMonitor() {
+  stopTimers();
+  newEventsTimer = setInterval(checkForNewMessages, prefs.delayBetweenChecks * 1000);
+  if (prefs.delayBetweenReminders) {
+	remindersTimer = setInterval(notifyReminders, prefs.delayBetweenReminders * 1000);
+  }
+}
+
+function onGotPrefs(prefs) {
+  console.log("onGotPrefs: ", prefs);
+  setNewPrefs(prefs);
+  startMonitor();
+}
+
+function getPrefsAndStart() {
+  browser.storage.local.get().then(onGotPrefs, console.error);
+}
+
+function onPrefChanged(changes, area) {
+  console.log("onPrefChanged: ", changes);
+  if (changes.updateFavIcon !== undefined && changes.updateFavIcon.newValue !== changes.updateFavIcon.oldValue) {
+    if (changes.updateFavIcon.newValue) {
+      setFavicon(unreadEmailsCount + visibleRemindersCount + chatNotificationsCount);
+    } else {
+      restoreOriginalOwaIcon();
+    }
+  }
+  if (changes.updateDocumentTitle !== undefined && changes.updateDocumentTitle.newValue !== changes.updateDocumentTitle.oldValue) {
+    if (changes.updateDocumentTitle.newValue) {
+      setDocumentTitle(unreadEmailsCount, visibleRemindersCount, chatNotificationsCount);
+    } else {
+      restoreInitialDocumentTitle();
+    }
+  }
+  getPrefsAndStart();
+}
