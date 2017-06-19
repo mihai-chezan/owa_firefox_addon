@@ -125,7 +125,8 @@ button {
             <option value='span[title="Inbox"] ~ ._n_07'>OWA 2013 v2 (just Inbox)</option>
             <option value='span[title="Inbox"]._n_u4 ~._n_A4 ._n_x4[autoid]'>OWA 2013 v3 (just Inbox)</option>
             <option value='span[title="Inbox"] + div > span'>OWA 365 Personal (just Inbox)</option>
-            <option value='.treeHeaderContainer + [id="MailFolderPane.FavoritesFolders"] [title="Inbox"] + div > span'>OWA 365 Enterprise (just Inbox from Favorites)</option>
+            <option value='.treeHeaderContainer + [id="MailFolderPane.FavoritesFolders"] [title="Inbox"] + div > span'>OWA 365 Enterprise v1 (just Inbox from Favorites)</option>
+            <option value='#MailFolderPane\.FavoritesFolders > div:nth-child(1) .ms-bg-color-neutralLighter span'>OWA 365 Enterprise v2 (from Favorites)</option>
           </select>
           <input id="cssForUnreadEmailsDetection" type="text">
         </div>
@@ -144,7 +145,8 @@ button {
             <option value='#spnRmT.alertBtnTxt'>OWA 2010</option>
             <option value='[aria-label="New Notification"]'>OWA 2013</option>
             <option value='.o365cs-notifications-notificationPopup .o365cs-notifications-notificationHeaderText'>OWA 365 Personal</option>
-            <option value='.o365cs-flexPane-unseenCount'>OWA 365 Enterprise</option>
+            <option value='.o365cs-flexPane-unseenCount'>OWA 365 Enterprise v1</option>
+            <option value='#O365_Notifications_ButtonID .o365cs-flexPane-unseenitems span:nth-child(1)'>OWA 365 Enterprise v2</option>
           </select>
           <input id="cssForVisibleRemindersDetection" type="text">
         </div>
