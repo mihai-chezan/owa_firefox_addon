@@ -6,7 +6,7 @@
   "homepage": "https://github.com/mihai-chezan/owa_notifications_firefox_extension",
   "author": "Mihai Chezan",
   "license": "MPL-2.0",
-  "version": "1.8.1-rc1",
+  "version": "1.8.1-rc2",
   "engines": {
       "firefox": ">= 52"
   },

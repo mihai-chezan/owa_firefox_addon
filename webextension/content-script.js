@@ -1,6 +1,6 @@
 "use strict";
 
-let prefs;
+let prefs = { favIconColor: "#0099FF" };
 let newEventsTimer, remindersTimer;
 let unreadEmailsCount = 0;
 let visibleRemindersCount = 0;
@@ -38,8 +38,8 @@ function generateTabIcon(number) {
   canvas.width = 16;
   canvas.height = 16;
   const ctx = canvas.getContext("2d");
-  // draw cliped circle (radius is bigger than canvas by 1px)
-  ctx.fillStyle="#0099FF";
+  // draw cliped circle (radius is bigger than canvas by 1px) - the effect is a square with round corners
+  ctx.fillStyle = prefs.favIconColor;
   ctx.beginPath();
   ctx.arc(8, 8, 9, 0, 2*Math.PI);
   ctx.fill();
@@ -240,6 +240,9 @@ function setNewPrefs(newPrefs) {
   if (prefs.delayBetweenReminders === undefined || (prefs.delayBetweenReminders > 0 && prefs.delayBetweenReminders < 4)) {
 	prefs.delayBetweenReminders = 4;
   }
+  if (prefs.favIconColor === undefined) {
+    prefs.favIconColor = "#0099FF";
+  }
 }
 
 function stopTimers() {
@@ -253,6 +256,7 @@ function stopTimers() {
 
 function startMonitor() {
   stopTimers();
+  checkForNewMessages();
   newEventsTimer = setInterval(checkForNewMessages, prefs.delayBetweenChecks * 1000);
   if (prefs.delayBetweenReminders) {
 	remindersTimer = setInterval(notifyReminders, prefs.delayBetweenReminders * 1000);
@@ -269,21 +273,16 @@ function getPrefsAndStart() {
   browser.storage.local.get().then(onGotPrefs, console.error);
 }
 
+function resetState() {
+  unreadEmailsCount = 0;
+  visibleRemindersCount = 0;
+  chatNotificationsCount = 0;
+  restoreOriginalOwaIcon();
+  restoreInitialDocumentTitle();
+}
+
 function onPrefChanged(changes, area) {
   console.log("onPrefChanged: ", changes);
-  if (changes.updateFavIcon !== undefined && changes.updateFavIcon.newValue !== changes.updateFavIcon.oldValue) {
-    if (changes.updateFavIcon.newValue) {
-      setFavicon(unreadEmailsCount + visibleRemindersCount + chatNotificationsCount);
-    } else {
-      restoreOriginalOwaIcon();
-    }
-  }
-  if (changes.updateDocumentTitle !== undefined && changes.updateDocumentTitle.newValue !== changes.updateDocumentTitle.oldValue) {
-    if (changes.updateDocumentTitle.newValue) {
-      setDocumentTitle(unreadEmailsCount, visibleRemindersCount, chatNotificationsCount);
-    } else {
-      restoreInitialDocumentTitle();
-    }
-  }
+  resetState();
   getPrefsAndStart();
 }

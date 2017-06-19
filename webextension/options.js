@@ -7,6 +7,7 @@ function saveOptions(e) {
     delayBetweenReminders: document.querySelector("#delayBetweenReminders").value,
     disableNotifications: document.querySelector("#disableNotifications").checked,
     updateFavIcon: document.querySelector("#updateFavIcon").checked,
+    favIconColor: document.querySelector("#favIconColor").value,
     updateDocumentTitle: document.querySelector("#updateDocumentTitle").checked,
     cssForUnreadEmailsDetection: document.querySelector("#cssForUnreadEmailsDetection").value,
     cssForVisibleRemindersDetection: document.querySelector("#cssForVisibleRemindersDetection").value,
@@ -46,6 +47,7 @@ function restoreOptions() {
     document.querySelector("#delayBetweenReminders").value = defaultVal(prefs.delayBetweenReminders, 300);
     document.querySelector("#disableNotifications").checked = defaultVal(prefs.disableNotifications, false);
     document.querySelector("#updateFavIcon").checked = defaultVal(prefs.updateFavIcon, true);
+    document.querySelector("#favIconColor").value = defaultVal(prefs.favIconColor, "#0099FF");
     document.querySelector("#updateDocumentTitle").checked = defaultVal(prefs.updateDocumentTitle, true);
     setCss("#cssForUnreadEmailsDetection", "#selectCssForUnreadEmailsDetection", prefs.cssForUnreadEmailsDetection);
     setCss("#cssForVisibleRemindersDetection", "#selectCssForVisibleRemindersDetection", prefs.cssForVisibleRemindersDetection);
