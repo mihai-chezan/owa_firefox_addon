@@ -44,7 +44,7 @@ function generateTabIcon(number) {
   ctx.arc(8, 8, 9, 0, 2*Math.PI);
   ctx.fill();
   // draw the number in center
-  ctx.font = "10px Helvetica";
+  ctx.font = "bold 12px Helvetica, sans-serif";
   ctx.textBaseline = "middle";
   ctx.textAlign = "center";
   ctx.fillStyle = "white";
