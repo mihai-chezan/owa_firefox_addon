@@ -6,6 +6,12 @@ const notifIcons = {
   "chat": browser.extension.getURL("chat-alert.png")
 }
 
+if("onShown" in browser.notifications) {
+  browser.notifications.onShown.addListener(() => {
+    browser.runtime.sendMessage("@notification-sound", "new-notification");
+  });
+}
+
 browser.runtime.onMessage.addListener(notif => {
   console.log("received onMessage on background script: ", notif);
   browser.notifications.create({
