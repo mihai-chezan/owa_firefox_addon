@@ -135,6 +135,10 @@ function countUnreadEmails() {
     // OWA 2013
     return getCountFromFolders(nodes);
   }
+  if ((nodes = document.querySelectorAll("[title='Favorites'] ~ div > div > [title='Inbox'] span:nth-of-type(2) > span")).length > 0) {
+    // outlook.live.com beta
+    return getCountFromNodes(nodes);
+  }
   return 0;
 }
 
@@ -159,6 +163,10 @@ function countVisibleReminders() {
   if ((nodes = document.querySelectorAll(".o365cs-notifications-notificationCounter")).length > 0) {
     // 365 old check
     return extractNumber(nodes[0].innerHTML);
+  }
+  if ((nodes = document.querySelectorAll("[data-storybook=\"reminder\"]")).length > 0) {
+    // outlook.live.com beta
+    return nodes.length;
   }
   return 0;
 }
