@@ -8,7 +8,7 @@ const notifIcons = {
 
 browser.runtime.onMessage.addListener(notif => {
   console.log("received onMessage on background script: ", notif);
-  browser.notifications.create({
+  browser.notifications.create("owa-" + type, {
     "type": "basic",
     "iconUrl": notifIcons[notif.type],
     "title": "OWA Notification",
