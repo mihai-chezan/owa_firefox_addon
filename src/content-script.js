@@ -246,8 +246,8 @@ function notifyReminders() {
 function setNewPrefs(newPrefs) {
   prefs = newPrefs;
   // set defaults
-  prefs.delayBetweenChecks = defaultVal(prefs.delayBetweenChecks, 1);
-  prefs.delayBetweenReminders = defaultVal(prefs.delayBetweenReminders, 300);
+  prefs.delayBetweenChecks = defaultVal(prefs.delayBetweenChecks, 1) - 0;
+  prefs.delayBetweenReminders = defaultVal(prefs.delayBetweenReminders, 300) - 0;
   prefs.disableNotifications = defaultVal(prefs.disableNotifications, false);
   prefs.updateFavIcon = defaultVal(prefs.updateFavIcon, true);
   prefs.favIconColor = defaultVal(prefs.favIconColor, "#0099FF");
@@ -255,8 +255,8 @@ function setNewPrefs(newPrefs) {
   if (prefs.delayBetweenChecks < 1) {
     prefs.delayBetweenChecks = 1;
   }
-  if (prefs.delayBetweenReminders > 0 && prefs.delayBetweenReminders < 4) {
-    prefs.delayBetweenReminders = 4;
+  if (prefs.delayBetweenReminders > 0 && prefs.delayBetweenReminders < 5) {
+    prefs.delayBetweenReminders = 5;
   }
 }
 
@@ -277,7 +277,7 @@ function startMonitor() {
   stopTimers();
   checkForNewMessages();
   newEventsTimer = setInterval(checkForNewMessages, prefs.delayBetweenChecks * 1000);
-  if (prefs.delayBetweenReminders) {
+  if (prefs.delayBetweenReminders > 0) {
     remindersTimer = setInterval(notifyReminders, prefs.delayBetweenReminders * 1000);
   }
 }
