@@ -14,7 +14,7 @@
     "scripts": ["background.js"]
   },
   "content_scripts": [{
-      "matches": ["*://*/owa/*", "https://outlook.live.com/mail/*"],
+      "matches": ["*://*/owa/*", "https://outlook.live.com/mail/*", "https://outlook.office365.com/mail/*", "https://outlook.office.com/mail/*"],
       "js": ["content-script.js"]
   }],
   "options_ui": {
