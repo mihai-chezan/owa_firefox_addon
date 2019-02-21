@@ -136,9 +136,14 @@ function countUnreadEmails() {
     return getCountFromFolders(nodes);
   }
   if ((nodes = document.querySelectorAll("[title='Favorites'] ~ div > div > [title='Inbox'] span:nth-of-type(2) > span")).length > 0) {
-    // outlook.live.com beta
+    // outlook.live.com
     return getCountFromNodes(nodes);
   }
+  if ((nodes = document.querySelectorAll("[title='Folders'] ~ div > [title='Inbox'] span:nth-of-type(2) > span")).length > 0) {
+    // outlook.live.com Inbox not added to Favorites
+    return getCountFromNodes(nodes);
+  }
+
   return 0;
 }
 
