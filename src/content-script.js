@@ -121,6 +121,14 @@ function getCountFromFolders(folders) {
   return count;
 }
 
+function getOffice365CountFromNodes(nodes) {
+  return Array.from(nodes)
+              .filter(e => e.textContent==='unread')
+              .map(e => parseInt(e.previousSibling.textContent, 10))
+              .filter(v => !isNaN(v))
+              .reduce((acc, curr) => { return acc + curr}, 0);
+}
+
 function countUnreadEmails() {
   let nodes;
   if (prefs.cssForUnreadEmailsDetection) {
@@ -142,6 +150,10 @@ function countUnreadEmails() {
   if ((nodes = document.querySelectorAll("[title='Folders'] ~ div > [title='Inbox'] span:nth-of-type(2) > span")).length > 0) {
     // outlook.live.com Inbox not added to Favorites
     return getCountFromNodes(nodes);
+  }
+  if ((nodes = document.querySelectorAll("span span span.screenReaderOnly")).length > 0) {
+    // Office365 owa
+    return getOffice365CountFromNodes(nodes);
   }
 
   return 0;
