@@ -123,7 +123,7 @@ function getCountFromFolders(folders) {
 
 function getOffice365CountFromNodes(nodes) {
   return Array.from(nodes)
-              .filter(e => e.textContent==='unread')
+              .filter(e => e.textContent === 'unread' && e.offsetParent !== null)
               .map(e => parseInt(e.previousSibling.textContent, 10))
               .filter(v => !isNaN(v))
               .reduce((acc, curr) => { return acc + curr}, 0);
